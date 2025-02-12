@@ -1,0 +1,149 @@
+{
+  "package": {},
+  "code": {
+    "load_feature_report.py": {
+      "type": "python",
+      "inputs": {
+        "report_text": {
+          "type": [
+            "string"
+          ]
+        },
+        "report_id": {
+          "type": [
+            "string"
+          ]
+        },
+        "schema_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "item_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "item_type_coverage": {
+          "type": [
+            "string"
+          ],
+          "default": "feature_report"
+        }
+      },
+      "description": "Creates a dictionary containing items that are needed by the LLM nodes.\nThe items are used to generate the input prompts via jinja templates.",
+      "source": "load_feature_report.py",
+      "function": "load_feature_report"
+    },
+    "segment_feature_report.jinja2": {
+      "type": "llm",
+      "inputs": {
+        "feature": {
+          "type": [
+            "string"
+          ]
+        },
+        "feature_labels": {
+          "type": [
+            "string"
+          ]
+        },
+        "segment_feature_instructions": {
+          "type": [
+            "string"
+          ]
+        },
+        "report_text": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "segment_feature_report.jinja2"
+    },
+    "standardize_feature_report.jinja2": {
+      "type": "llm",
+      "inputs": {
+        "feature": {
+          "type": [
+            "string"
+          ]
+        },
+        "feature_labels": {
+          "type": [
+            "string"
+          ]
+        },
+        "standardize_feature_instructions": {
+          "type": [
+            "string"
+          ]
+        },
+        "segment_feature_report_output": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "standardize_feature_report.jinja2"
+    },
+    "build_output_feature_report.py": {
+      "type": "python",
+      "inputs": {
+        "segment_feature_report": {
+          "type": [
+            "string"
+          ]
+        },
+        "standardize_feature_report": {
+          "type": [
+            "string"
+          ]
+        },
+        "flow_dict": {
+          "type": [
+            "object"
+          ]
+        },
+        "connection_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "connection_model": {
+          "type": [
+            "string"
+          ]
+        },
+        "data_source_key": {
+          "type": [
+            "string"
+          ]
+        },
+        "run_batch_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "schema_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "model": {
+          "type": [
+            "string"
+          ]
+        },
+        "deployment_name": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "description": "Makes a dictionary with the output of the feature report and the prompts used to generate it.",
+      "source": "build_output_feature_report.py",
+      "function": "build_output_feature_report"
+    }
+  }
+}

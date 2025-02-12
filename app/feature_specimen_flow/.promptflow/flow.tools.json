@@ -1,0 +1,170 @@
+{
+  "package": {},
+  "code": {
+    "hello.jinja2": {
+      "type": "prompt",
+      "inputs": {
+        "text": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "hello.py": {
+      "type": "python",
+      "inputs": {
+        "input1": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "function": "my_python_tool"
+    },
+    "segment_feature_specimen.jinja2": {
+      "type": "llm",
+      "inputs": {
+        "feature": {
+          "type": [
+            "string"
+          ]
+        },
+        "feature_labels": {
+          "type": [
+            "string"
+          ]
+        },
+        "segment_feature_instructions": {
+          "type": [
+            "string"
+          ]
+        },
+        "report_text": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "segment_feature_specimen.jinja2"
+    },
+    "load_feature_specimen.py": {
+      "type": "python",
+      "inputs": {
+        "report_text": {
+          "type": [
+            "string"
+          ]
+        },
+        "report_id": {
+          "type": [
+            "string"
+          ]
+        },
+        "schema_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "item_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "item_type_coverage": {
+          "type": [
+            "string"
+          ],
+          "default": "feature_specimen"
+        }
+      },
+      "description": "Creates a dictionary containing items that are needed by the LLM nodes.\nThe items are used to generate the input prompts via jinja templates.",
+      "source": "load_feature_specimen.py",
+      "function": "load_feature_specimen"
+    },
+    "standardize_feature_specimen.jinja2": {
+      "type": "llm",
+      "inputs": {
+        "feature": {
+          "type": [
+            "string"
+          ]
+        },
+        "feature_labels": {
+          "type": [
+            "string"
+          ]
+        },
+        "standardize_feature_instructions": {
+          "type": [
+            "string"
+          ]
+        },
+        "segment_feature_specimen_output": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "standardize_feature_specimen.jinja2"
+    },
+    "build_output_feature_specimen.py": {
+      "type": "python",
+      "inputs": {
+        "segment_feature_report": {
+          "type": [
+            "string"
+          ]
+        },
+        "standardize_feature_report": {
+          "type": [
+            "string"
+          ]
+        },
+        "flow_dict": {
+          "type": [
+            "object"
+          ]
+        },
+        "connection_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "connection_model": {
+          "type": [
+            "string"
+          ]
+        },
+        "data_source_key": {
+          "type": [
+            "string"
+          ]
+        },
+        "run_batch_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "schema_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "model": {
+          "type": [
+            "string"
+          ]
+        },
+        "deployment_name": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "description": "Makes a dictionary with the output of the feature report and the prompts used to generate it.",
+      "source": "build_output_feature_specimen.py",
+      "function": "build_output_feature_report"
+    }
+  }
+}

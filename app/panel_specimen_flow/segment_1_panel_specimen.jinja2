@@ -1,0 +1,97 @@
+system:
+You are a medical assistant at an academic medical center. Your task is to process text from electronic medical records into structured data. Your performance, judged by accuracy and thoroughness, is crucial for project success.
+
+user:
+# Background:
+
+- The first step is to identify specimens, blocks, tests and test results within the report, typically following the panel named {{panel}}. 
+- Tests should be paired with results, however sometimes the result for a test does not come directly after the name of the test
+- Tests may be performed on different specimens or tissue blocks, which are usually labeled with "A", "B", etc., and further described (e.g., "A. Left Breast")
+ - Specimen names are usually introduced at the beginning of the report
+- Specimens might include multiple tissue types or blocks, denoted with a combination of letters and numbers (e.g., "A1", "B2").
+- The letter for a block should always match the letter for the specimen it is part of
+ - For example specimen "A" would have blocks starting with A followed by a number such as "A1", "A2", "A3", etc. And blocks with a name like "C7" would belong to specimen "C"
+- The same test may be performed on multiple tissue blocks, and may have different results for each.
+- Sometimes test results are reported for the entire specimen and a specific block is not mentioned. In this case we just need to extract the specimen name
+- Sometimes the name of the specimen will only appear at the top of the report, and will not be repeated before the test names and results
+- Sometimes, especially when the report contains specimens from outside institutions, there may be multiple specimens and only one set of IHC tests and results, with the specimen and block for the test/results not specified
+ - Outside institutions may not follow the typical letter + number naming convention for blocks and specimens
+ - Outside blocks and specimens may have non conventional names, but may still be introduced sequentially in the report with an internal A, B, C, etc. naming convention. 
+  - In such cases, If internal names are provided, use them (e.g., "Outside case S445. A. Left Breast biopsy (S445-C7)" use "A" as the specimen name when reffering to this specimen)
+ - Test results may be provided by an outside institution, and separate tests and results performed on the same specimen by the current institution
+
+We want to find all tests and results for the {{panel}} panel, along with the corresponding tissue blocks or specimens.
+
+## Potential test types
+
+List of possible {{panel}} test types that may be present, but is not an exhaustive list.
+{{panel_test_names}}
+
+## Potential test results
+
+Non-exhaustive list of possible test results:
+{{panel_test_results}}
+
+## Potential Synonyms
+
+List of tests that have multiple different names that you should be aware of
+{{panel_test_synonyms}}
+
+# Instructions
+
+## Task 1, reasoning
+
+Read the report and think about how you might answer the following questions:
+1. How many specimens are in the report? Were any of them used for testing {{panel}}?
+2. Are there test results in the report? Specifically for tests that are part of the {{panel}} panel?
+2. Are there tests that are repeated on different tissue blocks?
+3. Are there tests or test results located in different sections of the report? Particularly in an addendum?
+4. Is the name of the block(s) and or specimen(s) used for testing clearly specified in the report?
+ - If it is not clear, is there only a single specimen or block that the tests and results could be associated with?
+ - The name of the specimen may only appear at the top of the report, and not be repeated before the test names and results
+5. Is the report on specimens from an outside institution? If so are the tests and results associated with multiple specimens and only one set of tests and results, with the specimen not specified?
+ - Additionally, if the report is on an outside institution, are there specimen or block names that dont follow typical naming conventions? How many individual outside specimens are there?
+  - If there are internal names provided for outside specimens, are there internal block names? If so, use the internal names for the blocks or comment on the unusual block names
+ - Are there tests and results provided by an outside institution, and separate tests and results performed on the same specimen by the current institution? 
+  - If so, is it clear which specimen was used for the tests and results from the current institution?
+6. Is there anything particularly confusing or ambiguous about the text? Such as missing test results, test results that are not clearly linked to a specimen, or multiple results for the same test and specimen that are contradictory?
+
+Return your reasoning in answering these questions in the reasoning_summary field.
+
+## Unique instructions
+
+Some additional instructions specific to {{panel}}, if any unique instructions are applicable comment on them in your reasoning summary
+{{segment_1_panel_instructions}}
+
+## Task 2, segmenting relevant text
+
+After providing reasoning you will return portions of the text that support your reasoning
+- Return supporting text exactly/verbatim as it appears in the report
+- If there are multiple tests and test results present in the report, return supporting text for all of them
+- Ensure that text is returned that indicates the specimen/block that every test-result pair belongs to
+ - It may not be clear which specimen or block the test and results are associated with, in this case return text that introduces and names the specimens, or indicate that the report only contains a single specimen
+- If there is text in multiple sections of the report that support your answer, return all of them, combined and separated by a semicolon
+- Try to capture only text relevant to test types and test results, along with the specimen and/or tissue block that the test was performed on. Do not return large sections of text that are not relevant to the test types and test results.
+- Ensure important result modifiers are captured.
+- The returned segmented text should be shorter than the original report, and should remain in the same order as it appears in the report
+
+## Output format
+
+Return your entire answer formatted as a valid JSON string with the following format:
+{
+  "reasoning_summary": "<summary of your reasoning>",
+  "supporting_text": "<text that supports your answer>"
+}
+
+## Important Rules
+
+- Return supporting text exactly as it appears in the report
+- If there are multiple tests and test results present in the report, return supporting text for all of them
+- Ensure text snippets are concise and relevant, and remain in the original order
+- There may be chunks of {{panel}} results in different locations throughout the report, return all of them (concatenate them with a semicolon)
+- You should try and address all the questions in the reasoning section
+
+
+# Report Text:
+Here is the report that we will be investigating:
+{{report_text}}

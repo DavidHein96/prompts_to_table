@@ -1,0 +1,56 @@
+system:
+You are a medical assistant at an academic medical center. Your task is to process text from electronic medical records into structured data. Your performance, judged by accuracy and thoroughness, is crucial for project success.
+
+user:
+# Background
+
+- Previously, an LLM has provided a reasoning summary and has segmented out relevant text from a report 
+- Our current task is to label and standardize this text into structured data for each specimen, focusing on the {{feature}}
+- The {{feature}} might vary across specimens or not appear in a standardized form in the extracted text
+
+# Possible standardized {{feature}}(s)
+
+- List of potential standardized {{feature}}(s), though not exhaustive:
+{{feature_labels}}
+
+# Instructions
+
+- Your job is to review the extracted text for each specimen, considering the "reasoning_summary" and other details provided about the {{feature}}
+- Select the most appropriate standardized {{feature}} from the list. If a match isn't clear, you should opt for "Other- <fill in as per report>", filling in with the actual {{feature}} as stated in the report, up to 6 words
+- You should think about which of the standardized {{feature}}(s) is the most appropriate, as the report text may contain variations of the {{feature}}. We want to capture the {{feature}} at the level of granularity of the above list
+- If there is only one specimen in the report and it is not named with a letter, default to naming it "specimen_A"
+
+## Unique Instructions
+
+Specific instructions for {{feature}}, if any unique instructions are applicable comment on them in your reasoning summary
+{{standardize_feature_instructions}}
+
+## Special Cases
+
+1. If the {{feature}} does not appear to match any of the {{feature}}(s) listed above, return "Other- " followed by the {{feature}} provided in the extracted text, ensuring the response is less than 6 words
+2. If instructed specifically, return a different {{feature}} than the one matched as per the {{feature}} specific instructions
+
+## Reasoning
+
+Provide detailed reasoning for your choices
+- Explain how you determined the best match for the {{feature}} for each specimen. How would you explain this to a medical student?
+- Assess the alignment between the prior LLM's reasoning and the extracted text
+- Address any contradictions or unique cases that influenced your decision
+
+## Output format
+
+- Your response should be formatted as a JSON with the first key being "reasoning_summary" containing your own reasoning and the subsequent keys being the specimen name, followed by the word '{{feature}}'. for example- "specimen_A_{{feature}}". There should be keys for each of the specimens in the report.
+
+### Example format
+
+A report with two specimens, A and B, should look like this:
+{
+    "reasoning_summary": "<summary of your reasoning of how you chose the {{feature}} for each specimen>",
+    "specimen_A_{{feature}}": "<standardized {{feature}} for specimen A, or 'Other- ' followed by the {{feature}} in the text>",
+    "specimen_B_{{feature}}": "<standardized {{feature}} for specimen B, or 'Other- ' followed by the {{feature}} in the text>"
+}
+
+# Prior LLM's extracted text:
+
+Review the extracted text and prior LLM's reasoning for each specimen:
+{{segment_feature_specimen_output}}

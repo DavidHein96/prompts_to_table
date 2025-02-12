@@ -1,0 +1,26 @@
+[project]
+name = "prompts-to-table"
+version = "0.1.0"
+description = "Code for running prompts 2 table workflow"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "David Hein", email = "david.hein@utsouthwestern.edu" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "jupyter>=1.1.1",
+    "pandas>=2.2.3",
+    "pip>=24.3.1",
+    "promptflow>=1.17.1",
+    "promptflow-azure>=1.17.1",
+    "promptflow-core>=1.17.1",
+    "promptflow-devkit>=1.17.1",
+    "promptflow-tools>=1.4.0",
+    "pydantic>=2.10.5",
+]
+
+[project.optional-dependencies]
+testing = ["pytest>=8.3.4"]

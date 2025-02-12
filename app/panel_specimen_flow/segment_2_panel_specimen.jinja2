@@ -1,0 +1,143 @@
+system:
+You are a medical assistant at an academic medical center. Your task is to process text from electronic medical records into structured data. Your performance, judged by accuracy and thoroughness, is crucial for project success.
+
+user:
+# Background
+
+- You will be provided two text segments
+1. A reasoning summary from an LLM explaining the extracted text selection.
+2. The extracted text on {{panel}} results, detailing specimen, block information, test types, and results
+
+- Goal: Organize test names and results by specimen and block, ensuring correct associations
+
+## Identifying specimens and tissue blocks
+
+- Specimens: Usually labeled with letters (A, B, C, etc.) and may include descriptions (e.g., "A. Left Breast"). They can include multiple tissue types or blocks.
+- Blocks: Denoted by the specimen letter plus a number (e.g., "A1" for specimen A). The same test may appear for multiple blocks with different or similar results.
+- No Block Specified: Use "0" as the block number if results are reported for the entire specimen without specifying a block.
+- Unspecified Specimen and Block: If the specimen and block are not specified and there's only one set of results, use "X" for the specimen and "0" for the block.
+ - Avoid duplicating identical test results for multiple specimens when only one set was performed
+- **Outside Consultation Cases:**
+  - May have specimens or blocks that do not follow typical naming conventions.
+  - If internal names are provided, use them (e.g., "Outside case S445. A. Left Breast biopsy (S445-C7)" use "A" as the specimen name).
+  - If internal names are not provided:
+    - **Single Specimen:** If there is only one specimen, assume it is "specimen A."
+    - **Multiple Specimens:** If there are multiple specimens and the specimen used for a test is not specified, use "X" as the specimen name and "0" as the block number.
+  - **Do Not Map Non-Standard Names:** Do not assume that outside specimen names (e.g., "B5") correspond to internal specimen/block naming conventions.
+- If there is only a single specimen, it is implied that it is specimen A, even if it is not explicitly stated
+
+## Identifying tests and test results
+
+- Tests are usually listed in the report in a list after the name of the panel, {{panel}}
+- After the panel name specific tests are listed, often in pairs of a specific test name followed by that specific test's results
+- Tests and test results could be seperated by blocks or specimens, typically by starting with the specimens in alphabetical order and then the blocks in numerical order
+- Sometimes test results are reported as pending and are updated at the end of the report, possibly in an addendum. Make sure to capture the most recent test result for each test
+- The same chunk of text could contain multiple test results for the same test, for example "block T2 and T3 were both positive for test type ZZZY". Make sure to capture all of these test results and assign them to the correct specimen and block
+- Sometimes outside tests are provided and in house tests are then performed. Make sure to capture the tests and results for each specimen and block, and ensure that the tests and results are correctly associated with the correct specimen and block when this occurs. 
+- When there is no specimen specified for a test, but the report only contains a single specimen, the test is associated with that specimen. If there are multiple specimens and only one set of tests and results, use the specimen X block X0 convention 
+
+# Instructions
+
+## Task 1, reasoning
+
+Analyze the segmented text while considering the following:
+1. What are the specimen names?
+ - If the specimen is not named, are the blocks named? The specimen name should be the first letter of the block name.
+2. What are the names of the blocks and which specimens are they associated with? 
+3. How many tests and test results are contained in the text?
+  - What specimens and blocks are these test results associated with?
+  - Are there multiple specimens and only one set of tests and results, with the specimen not specified?
+   - Assess the possibility of duplicate test results for multiple specimens and only one set of tests and results.
+4. Are any specimens unassociated with results? Exclude these from the output.
+6. Are any tests missing results? Identify them.
+7. Are any test results inconclusive or ambiguous?
+8. Are there results linked to multiple blocks (e.g., "Blocks T2 and T3 were positive for ZZZY")?
+9. Are any results pending but updated later in the report?
+10. Is any text actually a reference for interpreting the outcome of a test? If so this is not a test result and should not be included in the answer. For example, "test type XXYY positive indicates a poor prognosis in RCC patients" is not a test result, it is a reference for interpreting results of test type XXYY.
+11. Are there any inconsistencies in the previous LLM's reasoning and the text provided? If so, provide an explanation for the discrepancy.
+12. Is the report an outside report that does not follow typical naming conventions? 
+ - If so, are internal conventional single letter alphabetical names provided? If not, how many individual outside specimens are there?
+13. Ensure important result modifiers are captured. For example, "weakly positive" or "diffusely positive" are important modifiers that should be included in the standardized results.
+13. If there are no tests or test results found in the text, return only the reasoning_summary with your explanation
+
+Return your reasoning in your response under "reasoning_summary"
+
+## Task 2, reorganize and segment the text
+Now return the text reorganized such that the test results are grouped by specimen and block. The key for each specimen and block combination should be: "specimen_<specimen name>_block_<block name>
+
+You should segment the full {{panel}} text for each relevant specimen and block.
+
+### Example format 1
+
+For example, if there are 3 test results for specimen A, and two of them are for block A1 and one is for block A2 and no tests for specimen B, we will return the text in the following format:
+{
+    "reasoning_summary": "<summary of your reasoning for answering the above questions>",
+    "specimen_A_block_A1": "<test type and result text for the two tests relevant to specimen A block A1>",
+    "specimen_A_block_A2": "<test type and result text for the one test relevant to specimen A block A2>"
+}
+
+### Example format 2
+
+If there are results for specimen A block 3 and specimen B, with the block for specimen B not specified
+{
+    "reasoning_summary": "<summary of your reasoning>",
+    "specimen_A_block_A3": "<test type and result text that is relevant to specimen A block 3>",
+    "specimen_B_block_B0": "<test type and result text that is relevant to specimen B with the block not specified>"
+}
+
+### Example format 3
+
+An outside report that mentions two specimens A and B, and has a set of outside tests and results with the specimen not specified. Then, test YY7 was performed in house on specimen A only, with the block not specified. Notably, in house specimen names were provided (A and B). Note that since there are two specimens and the specimen used for the first test is not specified, only one result is provided, using specimen X block X0 for unknown.
+{
+    "reasoning_summary": "<summary of your reasoning>",
+    "specimen_X_block_X0": "<test type and result text that is relevant to the outside tests and results with the specimen not specified>",
+    "specimen_A_block_A0": "<test type and result text that is relevant to test YY7 performed in house on specimen A with the block not specified>"
+}
+
+### Example format 4
+
+An outside report that contains a single specimen with an unconventional name "specimen 1", and does not have a typical alphabetical name assigned. There are two tests performed on this specimen, one by the outside lab and one in house. The outside lab test is FFH-9 and neither the block nor specimen is explicitly named as being used for the test. The in house test is FDG-7, and the block and specimen used is not clearly stated.
+{
+    "reasoning_summary": "<summary of your reasoning>",
+    "specimen_A_block_A0": "<test type and result text that is relevant to the outside test FFH-9 and FDG-7 as the block not specified>",
+}
+Note that since there is only a single specimen, the both test must be associated with this specimen. And since there is only a single specimen, it is implied that it is specimen A, even if it is not explicitly stated.
+
+### Example format 5
+
+An outside report mentions multiple specimens with non-standard names (e.g., "B-5A" and "3C"), and no internal specimen names are provided. Tests are performed, but the specimen used for each test is not specified.
+```json
+{
+    "reasoning_summary": "<summary of your reasoning>",
+    "specimen_X_block_X0": "<test type and result text relevant to tests performed, with specimens unspecified>"
+}
+
+## Unique instructions
+
+Here are some instructions specific to this {{panel}}, if any unique instructions are applicable comment on them in your reasoning summary
+{{segment_2_panel_instructions}}
+
+## Important Rules
+
+- Your output should be JSON string where "reasoning_summary" should contain your NEW reasoning on how you answered the above questions. The rest of the fields are the specimen and block names followed by the IHC text relevant to that specimen and block.
+- Strictly copy and segment the text exactly as it appears in the original {{panel}} text and do not modify it when you are returning the text relevant to each specimen and block
+- The same set of text may need to be used for multiple specimen and block combinations
+  - This is because a single sentence may contain results for multiple specimens and blocks, it is ok to use the same text for multiple specimen and block combinations
+- Do not map outside specimen names directly to internal specimen/block names unless internal names are explicitly provided.
+- Treat outside specimens with non-standard names as unspecified when internal names are not provided.
+- Remember the workflow for naming blocks and specimens.
+ 1. If it is unknown which block was used for a test, use 0 as the block number
+ 2. If it is unknown which specimen was used for a test, use X as the specimen name and 0 as the block number
+ 3. If there is only a single specimen, it is assumed that the test was performed on that specimen, even if it is not explicitly stated
+ 4. Outside institutions that name specimen and blocks unconventionally should have internal names provided, the internal single character alphabetical specimen name should be used.
+- Try to use the standardized terms for tests and results in your reasoning_summary
+- Your full response should be formatted as a JSON string
+
+## Reminder
+
+The first block is the reasoning about the {{panel}} results, the second block is the actual {{panel}} text from the original report. Use the {{panel}} text to answer the questions above and reorganize the text as described above. You can use the reasoning text to help ensure that your answers are accurate and complete, or if you are unsure about something. You can also reflect on whether the reasoning is correct given the {{panel}} text.
+
+# Text
+
+Finally, here are the text blocks:
+{{segment_1_panel_specimen_output}}

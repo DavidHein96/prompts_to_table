@@ -1,0 +1,117 @@
+$schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
+environment:
+  python_requirements_txt: requirements.txt
+additional_includes:
+  - ../schemas/
+  - ../helper_functions/
+inputs:
+  report_text:
+    type: string
+  report_id:
+    type: string
+    default: ""
+  schema_name:
+    type: string
+    default: ""
+  item_name:
+    type: string
+    default: ""
+  deployment_name:
+    type: string
+    default: none
+  model:
+    type: string
+    default: none
+  connection_name:
+    type: string
+    default: ""
+  connection_model:
+    type: string
+    default: ""
+  run_batch_name:
+    type: string
+    default: ""
+  data_source_key:
+    type: string
+    default: ""
+outputs:
+  json_items:
+    type: string
+    reference: ${build_output_panel_specimen.output}
+nodes:
+  - name: load_panel_specimen
+    type: python
+    source:
+      type: code
+      path: load_panel_specimen.py
+    inputs:
+      report_text: ${inputs.report_text}
+      report_id: ${inputs.report_id}
+      item_name: ${inputs.item_name}
+      schema_name: ${inputs.schema_name}
+  - name: segment_1_panel_specimen
+    type: llm
+    source:
+      type: code
+      path: segment_1_panel_specimen.jinja2
+    inputs:
+      deployment_name: ${inputs.deployment_name}
+      temperature: 0
+      panel: ${load_panel_specimen.output.panel}
+      panel_test_names: ${load_panel_specimen.output.panel_test_names}
+      panel_test_results: ${load_panel_specimen.output.panel_test_results}
+      report_text: ${load_panel_specimen.output.report_text}
+      panel_test_synonyms: ${load_panel_specimen.output.panel_test_synonyms}
+      segment_1_panel_instructions: ${load_panel_specimen.output.segment_1_panel_instructions}
+      model: ${inputs.model}
+    connection: kidney_4o
+    api: chat
+  - name: segment_2_panel_specimen
+    type: llm
+    source:
+      type: code
+      path: segment_2_panel_specimen.jinja2
+    inputs:
+      deployment_name: ${inputs.deployment_name}
+      temperature: 0
+      panel: ${load_panel_specimen.output.panel}
+      segment_1_panel_specimen_output: ${segment_1_panel_specimen.output}
+      segment_2_panel_instructions: ${load_panel_specimen.output.segment_2_panel_instructions}
+      model: ${inputs.model}
+    connection: kidney_4o
+    api: chat
+  - name: standardize_panel_specimen
+    type: llm
+    source:
+      type: code
+      path: standardize_panel_specimen.jinja2
+    inputs:
+      deployment_name: ${inputs.deployment_name}
+      temperature: 0
+      panel: ${load_panel_specimen.output.panel}
+      panel_test_names: ${load_panel_specimen.output.panel_test_names}
+      panel_test_results: ${load_panel_specimen.output.panel_test_results}
+      panel_test_synonyms: ${load_panel_specimen.output.panel_test_synonyms}
+      segment_2_panel_specimen_output: ${segment_2_panel_specimen.output}
+      standardize_panel_instructions: ${load_panel_specimen.output.standardize_panel_instructions}
+      model: ${inputs.model}
+    connection: kidney_4o
+    api: chat
+  - name: build_output_panel_specimen
+    type: python
+    source:
+      type: code
+      path: build_output_panel_specimen.py
+    inputs:
+      segment_1_panel_specimen: ${segment_1_panel_specimen.output}
+      segment_2_panel_specimen: ${segment_2_panel_specimen.output}
+      standardize_panel_specimen: ${standardize_panel_specimen.output}
+      flow_dict: ${load_panel_specimen.output}
+      deployment_name: ${inputs.deployment_name}
+      connection_name: ${inputs.connection_name}
+      connection_model: ${inputs.connection_model}
+      model: ${inputs.model}
+      data_source_key: ${inputs.data_source_key}
+      run_batch_name: ${inputs.run_batch_name}
+      schema_name: ${inputs.schema_name}
+    aggregation: false

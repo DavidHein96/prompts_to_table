@@ -1,0 +1,98 @@
+$schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
+environment:
+  python_requirements_txt: requirements.txt
+additional_includes:
+  - ../schemas/
+  - ../helper_functions/
+inputs:
+  report_text:
+    type: string
+  report_id:
+    type: string
+    default: ""
+  schema_name:
+    type: string
+    default: ""
+  item_name:
+    type: string
+    default: ""
+  deployment_name:
+    type: string
+    default: none
+  model:
+    type: string
+    default: none
+  connection_name:
+    type: string
+    default: ""
+  connection_model:
+    type: string
+    default: ""
+  run_batch_name:
+    type: string
+    default: ""
+  data_source_key:
+    type: string
+    default: ""
+outputs:
+  json_items:
+    type: string
+    reference: ${build_output_feature_report.output}
+nodes:
+  - name: load_feature_report
+    type: python
+    source:
+      type: code
+      path: load_feature_report.py
+    inputs:
+      report_text: ${inputs.report_text}
+      report_id: ${inputs.report_id}
+      item_name: ${inputs.item_name}
+      schema_name: ${inputs.schema_name}
+  - name: segment_feature_report
+    type: llm
+    source:
+      type: code
+      path: segment_feature_report.jinja2
+    inputs:
+      deployment_name: ${inputs.deployment_name}
+      temperature: 0
+      feature: ${inputs.item_name}
+      feature_labels: ${load_feature_report.output.feature_labels}
+      segment_feature_instructions: ${load_feature_report.output.segment_feature_instructions}
+      report_text: ${inputs.report_text}
+      model: ${inputs.model}
+    connection: kidney_4o
+    api: chat
+  - name: standardize_feature_report
+    type: llm
+    source:
+      type: code
+      path: standardize_feature_report.jinja2
+    inputs:
+      deployment_name: ${inputs.deployment_name}
+      temperature: 0
+      feature: ${inputs.item_name}
+      feature_labels: ${load_feature_report.output.feature_labels}
+      standardize_feature_instructions: ${load_feature_report.output.standardize_feature_instructions}
+      segment_feature_report_output: ${segment_feature_report.output}
+      model: ${inputs.model}
+    connection: kidney_4o
+    api: chat
+  - name: build_output_feature_report
+    type: python
+    source:
+      type: code
+      path: build_output_feature_report.py
+    inputs:
+      segment_feature_report: ${segment_feature_report.output}
+      standardize_feature_report: ${standardize_feature_report.output}
+      flow_dict: ${load_feature_report.output}
+      deployment_name: ${inputs.deployment_name}
+      connection_name: ${inputs.connection_name}
+      connection_model: ${inputs.connection_model}
+      model: ${inputs.model}
+      data_source_key: ${inputs.data_source_key}
+      run_batch_name: ${inputs.run_batch_name}
+      schema_name: ${inputs.schema_name}
+    aggregation: false

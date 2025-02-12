@@ -1,0 +1,32 @@
+{
+    "report_type": "pathology",
+    "report_subtype": "breast",
+    "schema_version": "v3",
+    "panel_specimen": {
+        "immunohistochemistry": {
+            "panel_test_names": [
+                "HER2-FISH",
+                "HER2-IHC",
+                "PR",
+                "ER"
+            ],
+            "panel_test_results": {
+                "status": [
+                    "Positive",
+                    "Negative",
+                    "Equivocal",
+                    "Not Reported"
+                ]
+            },
+            "panel_test_synonyms": [
+                "HER2-FISH (HER2/neu fluorescence In situ hybridization, HER-2 FISH)",
+                "HER2-IHC (HER2/neu HercepTest, HER2 Ventana immunohistochemistry, HER-2 IHC)",
+                "ER (ESTROGEN RECEPTOR, estrogen receptor, estrogen recpetors)",
+                "PR (PROGESTERONE RECEPTOR, progesterone receptor, progesterone receptors)"
+            ],
+            "segment_1_panel_instructions": "We are only interested in the four tests HER2 (both FISH and IHC), PR, and ER. You do not need to include results from other tests, focus primarily on these. There will often be both HER2 immunohistochemistry (IHC) and fluorescence in situ hybridization (FISH) results present. Ensure both are captured. We are also interested in the percentage of cells staining, as this can sometimes inform whether a result is interpreted by the pathologist to be positive or negative, try to capture relevant text regarding this. For HER2 FISH, we are interested in text stating the amplification status. A result of amplified would be considered positive, and a result of NOT amplified would be considered negative, so ensure this is captured. Additionally, we are interested in tests performed successfully on the primary cancerous breast tissue specimen, if there are tests performed on benign tissue we are less interested. Ideally try to only capture the successful tests on cancerous breast tissue",
+            "segment_2_panel_instructions": "We are only interested in the four tests HER2 (both FISH and IHC), PR, and ER. You do not need to include results from other tests, focus primarily on these. There will often be both HER2 immunohistochemistry (IHC) and fluorescence in situ hybridization (FISH) results present. Ensure both are captured. We are also interested in the percentage of cells staining, as this can sometimes inform whether a result is interpreted by the pathologist to be positive or negative, try analyze this the best you can in the reasoning section. For HER2 FISH, we are interested in text stating the amplification status. A result of amplified would be considered postive, and a result of NOT amplified would be considered negative, so ensure this is captured. Additionally, we are interested in tests performed successfully on the primary cancerous breast tissue specimen, if there are tests performed on benign tissue we are less interested. If it is not clear what specimen was used ensure that duplicate results are not returned. Always try to use specimen X block X0 if it is not clear which specimen was used, instead of returning duplicate results. There should typically be only one set of test results per report. Ideally, attempt only capture a single set of results for the 4 tests per report, and correspond the results with the tests performed on the cancerous breast tissue. Comment on this in your reasoning section.",
+            "standardize_panel_instructions": "We are only interested in the four tests HER2 (both FISH and IHC), PR, and ER. You do not need to include results from other tests, focus primarily on these. There will often be both HER2 immunohistochemistry (IHC) and fluorescence in situ hybridization (FISH) results present. Ensure both are captured. We are also interested in the percentage of cells staining, as this can sometimes inform whether a result is interpreted by the pathologist to be positive or negative, try analyze this the best you can in the reasoning section. For HER2 FISH, we are interested in text stating the amplification status. A result of amplified would be considered positive, and a result of NOT amplified would be considered negative, ensure that you properly convert to the standardized terms of Positive and Negative. Additionally, we are interested in tests performed successfully on the primary cancerous breast tissue specimen, if there are tests performed on benign tissue we are less interested. If it is not clear what specimen was used ensure that duplicate results are not returned. Always try to use specimen X block X0 if it is not clear which specimen was used, instead of returning duplicate results. There should typically be only one set of test results per report. Ideally, attempt only capture a single set of results for the 4 tests per report, and correspond the results with the tests performed on the cancerous breast tissue. Comment on this in your reasoning section. Only use the options Positive, Negative, Equivocal, or Not Reported, do not include any other modifiers in your output for the test status."
+        }
+    }
+}

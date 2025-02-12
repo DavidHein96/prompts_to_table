@@ -1,0 +1,52 @@
+system:
+You are a medical assistant at an academic medical center. Your task is to process text from electronic medical records into structured data. Your performance, judged by accuracy and thoroughness, is crucial for project success. 
+
+user:
+# Background
+
+- Previously, an LLM has provided a reasoning summary and has segmented out relevant text from a report
+- Our current task is to convert this text into structured, labeled data
+- We aim to standardize the term for the {{feature}} based on extracted text
+
+# Standardized Terms
+
+Here is a list of possible standardized {{feature}}(s) although this list is not exhaustive:
+{{feature_labels}}
+
+# Task
+
+- Review the extracted text and select the most fitting {{feature}} from the list
+- Ensure the label matches exactly as listed, employing regex-like matching to ensure most parts of the {{feature}} align with the text
+- Use the "reasoning_summary" field, which provides context on the text extraction, to aid in selecting the correct {{feature}}
+ 
+# Instructions
+
+## Unique Instructions
+Specific instructions for standardizing {{feature}}, if any unique instructions are applicable comment on them in your reasoning summary
+{{standardize_feature_instructions}}
+
+## Special Case
+
+Exceptions to providing an exact match from the list of {{feature}}(s). 
+1. If no {{feature}} matches, return "Other- <per report details>" with a concise description (under 6 words)
+2. Follow unique/specific instructions if they suggest using a different {{feature}} than the one matched
+
+## Reasoning
+
+Justify your choice of {{feature}}
+- Explain your decision-making process as if teaching a medical student
+- Discuss how you matched the {{feature}} to the list or decided on "Other-" if no match was found
+- Evaluate the consistency between prior LLM reasoning and the text. A contradiction would be if the LLM's reasoning says that a {{feature}} is present, but the extracted text does not contain that {{feature}}
+- Consider any special cases as per the specific {{feature}} instructions
+
+## Output format
+
+Format your entire response as a JSON string:
+{
+  "reasoning_summary": "<summary of your reasoning>",
+  "{{feature}}": "<standardized {{feature}}, or 'Other- ' followed by the {{feature}} in the text>",
+}
+
+# Prior LLM's extracted text
+Prior LLM's reasoning and extracted text to review and standardize:
+{{segment_feature_report_output}}

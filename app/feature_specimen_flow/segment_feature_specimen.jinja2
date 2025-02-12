@@ -1,0 +1,98 @@
+system:
+You are a medical assistant at an academic medical center. Your task is to process text from electronic medical records into structured data. Your performance, judged by accuracy and thoroughness, is crucial for project success.
+
+user:
+# Background:
+
+The initial task is to identify the types and counts of specimens in the report. We additionally want to know if there is any information about {{feature}} in the report. This {{feature}} can be present in multiple specimens, and we want to know which specimens contain information about {{feature}}. We also want to know if there are any specimens with multiple {{feature}}(s) present.
+
+## Identifying Specimens
+
+- Specimens are typically introduced with a label starting with "A" or "B" and detailed thereafter
+- The first specimen is usually labeled "A", subsequent specimens follow in alphabetical order
+- If a single specimen is present without a label, refer to it as "specimen_A"
+- Specimens often correspond to a specific tissue type, for example, "A. Left Breast" or "B. Right Breast"
+- Occasionally, a specimen might comprise multiple tissue types, such as "A. Left Breast and Left Axilla"
+- When a report is an outside consultation, the specimens names may not follow the typical "A", "B", "C" order
+
+## Specimen blocks
+
+- Specimens can also have multiple "blocks", which are smaller pieces of the specimen tissue that are used for testing
+- These are usually labeled with a letter and a number, such as "A1" or "B2"
+- The letter for a block should always match the letter for the specimen it is part of
+- For example specimen "A" would have blocks starting with A followed by a number such as "A1", "A2", "A3", etc. And blocks with a name like "C7" would belong to specimen "C"
+
+## Outside Consultation Reports
+
+- In some cases, the report may be an outside consultation, and the specimens may not follow the typical "A", "B", "C" naming convention, and the blocks may not follow the typical "A1", "A2", "A3" naming convention
+ - In such cases, if there is only one specimen, refer to it as specimen A. If there are multiple specimens, refer to them as A, B, C, in the order they appear in the report.
+
+## List of Potential {{feature}}
+
+Consider these potential {{feature}} types which are indicative but not exhaustive:
+{{feature_labels}}
+
+# Instructions
+
+## Task 1, Specimen Identification
+
+Analyze the report to determine and provide reasoning for the following:
+1. The total number of distinct specimens mentioned
+2. The tissue types associated with these specimens, including instances of multiple tissue types per specimen
+3. The presence of tissue blocks within the report, and their alignment with the specimens they belong to
+  - Remember that the letter for a block should always match the letter for the specimen it is part of. So specimen "H" can have blocks "H1", "H2", "H3", etc.
+4. If the report is an outside consultation
+  - If so, are the specimens named in the typical "A", "B", "C" order?
+  - If not, how are the specimens identified and labeled? How many individual specimens does there appear to be?
+
+## Task 2, Feature Analysis
+
+For each specimen, assess the presence and details of {{feature}}
+1. Identify specimens containing information about {{feature}}
+2. Check if any specimens feature multiple instances of {{feature}}
+3. Highlight any ambiguities or uncertainties related to {{feature}} in the specimens
+4. Determine if there is important text regarding the level of confidence or uncertainty in the {{feature}} identification
+5. Consider any of the unique instructions provided for  {{feature}} (provided below)
+
+Your findings for task 1 and 2 should be summarized in the "reasoning_summary" field, where you should reflect on how you answered the questions. 
+
+## Task 3, Supporting Text Segmentation
+
+Segment and return text supporting your analysis, organized by specimen
+1. Return text verbatim as it appears in the report
+2. Return the supporting text under the keys "supporting_text_A", "supporting_text_B", "supporting_text_C", for specimens A, B, and C etc. 
+- At the start of the text for each specimen please include the specimen label in all capital letters like "SPECIMEN A"
+- If there is only one specimen in the report, you will only need to return supporting_text_A.
+3. Combine text from multiple sections with a semicolon if supporting a single specimen
+Ensure text relevance and limit to less than 50 words per specimen.
+
+## Unique Instructions
+
+Specific instructions for {{feature}}, if any unique instructions are applicable comment on them in your reasoning summary
+{{segment_feature_instructions}}
+
+## Output format
+
+Return your entire response as a valid JSON string
+- There will always be a single reasoning_summary field, and there may be supporting_text_A, supporting_text_B, supporting_text_C, etc. fields depending on how many specimens are in the report and what the name of the specimen(s) is/are.
+
+For example, the following format would be for a report that only contains one specimen with the label "A" 
+{
+  "reasoning_summary": "<Your analysis summary>",
+  "supporting_text_A": "<SPECIMEN A text that supports your answer for specimen A, should be less than 50 words or about 3 sentences>"
+}
+
+## Important Rules
+
+- Text must be returned exactly as found in the report
+- If there are multiple specimens present in the report, return supporting text for all of them. When returning text for multiple specimens, organize the text starting with A, then B, then C, etc. return the supporting text under the keys "supporting_text_A", "supporting_text_B", "supporting_text_C", etc. At the start of the text for each specimen please include the specimen label in all capital letters like "SPECIMEN A" for specimen A and "SPECIMEN B" for specimen B
+- Text from different sections supporting the same specimen should be concatenated with a semicolon
+- The amount of text extracted should be less than 50 words per specimen or about 3 sentences
+- Do not return more than 50 words for each specimen, or about 3 sentences
+- Make sure the returned text is relevant to the {{feature}} in question
+- Ensure your entire response is a valid JSON string with properly formatted fields and values
+
+# Report Text:
+
+Here is the report for analysis:
+{{report_text}}

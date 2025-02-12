@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "ms-python.python",
+        "prompt-flow.prompt-flow",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "redhat.vscode-yaml",
+        "ms-python.flake8",
+        "ms-python.black-formatter",
+        "wholroyd.jinja",
+        "tamasfe.even-better-toml",
+        "mikestead.dotenv"
+    ]
+}

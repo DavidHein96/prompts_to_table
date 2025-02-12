@@ -1,0 +1,216 @@
+{
+  "package": {},
+  "code": {
+    "hello.jinja2": {
+      "type": "prompt",
+      "inputs": {
+        "text": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "hello.py": {
+      "type": "python",
+      "inputs": {
+        "input1": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "function": "my_python_tool"
+    },
+    "load_panel_specimen.py": {
+      "type": "python",
+      "inputs": {
+        "report_text": {
+          "type": [
+            "string"
+          ]
+        },
+        "report_id": {
+          "type": [
+            "string"
+          ]
+        },
+        "schema_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "item_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "item_type_coverage": {
+          "type": [
+            "string"
+          ],
+          "default": "panel_specimen"
+        }
+      },
+      "description": "Creates a dictionary containing items that are needed by the LLM nodes.\nThe items are used to generate the input prompts via jinja templates.",
+      "source": "load_panel_specimen.py",
+      "function": "load_panel_specimen"
+    },
+    "segment_1_panel_specimen.jinja2": {
+      "type": "llm",
+      "inputs": {
+        "panel": {
+          "type": [
+            "string"
+          ]
+        },
+        "panel_test_names": {
+          "type": [
+            "string"
+          ]
+        },
+        "panel_test_results": {
+          "type": [
+            "string"
+          ]
+        },
+        "panel_test_synonyms": {
+          "type": [
+            "string"
+          ]
+        },
+        "segment_1_panel_instructions": {
+          "type": [
+            "string"
+          ]
+        },
+        "report_text": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "segment_1_panel_specimen.jinja2"
+    },
+    "segment_2_panel_specimen.jinja2": {
+      "type": "llm",
+      "inputs": {
+        "panel": {
+          "type": [
+            "string"
+          ]
+        },
+        "segment_2_panel_instructions": {
+          "type": [
+            "string"
+          ]
+        },
+        "segment_1_panel_specimen_output": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "segment_2_panel_specimen.jinja2"
+    },
+    "standardize_panel_specimen.jinja2": {
+      "type": "llm",
+      "inputs": {
+        "panel": {
+          "type": [
+            "string"
+          ]
+        },
+        "panel_test_names": {
+          "type": [
+            "string"
+          ]
+        },
+        "panel_test_synonyms": {
+          "type": [
+            "string"
+          ]
+        },
+        "panel_test_results": {
+          "type": [
+            "string"
+          ]
+        },
+        "standardize_panel_instructions": {
+          "type": [
+            "string"
+          ]
+        },
+        "segment_2_panel_specimen_output": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "standardize_panel_specimen.jinja2"
+    },
+    "build_output_panel_specimen.py": {
+      "type": "python",
+      "inputs": {
+        "segment_1_panel_specimen": {
+          "type": [
+            "string"
+          ]
+        },
+        "segment_2_panel_specimen": {
+          "type": [
+            "string"
+          ]
+        },
+        "standardize_panel_specimen": {
+          "type": [
+            "string"
+          ]
+        },
+        "flow_dict": {
+          "type": [
+            "object"
+          ]
+        },
+        "connection_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "connection_model": {
+          "type": [
+            "string"
+          ]
+        },
+        "data_source_key": {
+          "type": [
+            "string"
+          ]
+        },
+        "run_batch_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "schema_name": {
+          "type": [
+            "string"
+          ]
+        },
+        "model": {
+          "type": [
+            "string"
+          ]
+        },
+        "deployment_name": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "description": "Makes a dictionary with the output of the panel specimen and the prompts used to generate it.",
+      "source": "build_output_panel_specimen.py",
+      "function": "build_output_panel_specimen"
+    }
+  }
+}
