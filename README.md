@@ -1,6 +1,7 @@
 # Prompts 2 Table
 
 Welcome to the Prompts 2 table code repo! This contains some code to get started using this workflow for information extraction from medical texts
+Check out [the pre-print here](https://www.medrxiv.org/content/10.1101/2025.02.11.25322107v1)
 
 - [Prompts 2 Table](#prompts-2-table)
   - [Getting started](#getting-started)
@@ -77,3 +78,4 @@ There are several helper function included for running flows, as well as utiliti
 - Adding some way of detecting problematic reports and flagging for review
 - Checking out reasoning models
 - Clarifying the use of "Other- fill in the blank" label categories for helping with consistency
+- Improve logging
