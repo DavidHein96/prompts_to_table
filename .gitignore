@@ -12,3 +12,4 @@ OLD/
 !example.env
 archive/
 /.quarto/
+_site/
