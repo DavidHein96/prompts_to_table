@@ -1,4 +1,4 @@
-""" Helps format the outputs of a flow run into a flat dataframe, one row per entity."""
+"""Helps format the outputs of a flow run into a flat dataframe, one row per entity."""
 
 import pandas as pd
 from pydantic import computed_field
@@ -69,6 +69,8 @@ def extract_item(row: pd.Series, pf_run_name: str) -> list[FlatResultsRow]:
 
     dict_output = row["outputs.json_items"]["standardized_output"]["output"]
     item_type_coverage = row["inputs.item_type_coverage"]
+
+    # NOTE: Note here that the result of the promptflow is a dictionary under the key "json_items"
     created_at = row["outputs.json_items"]["created_at"]
 
     results_typed = []
@@ -79,7 +81,7 @@ def extract_item(row: pd.Series, pf_run_name: str) -> list[FlatResultsRow]:
         flat_result = result_type_to_flat_map[item_type_coverage](
             report_id=row["inputs.report_id"],
             item_name=row["inputs.item_name"],
-            item_label=result[1],
+            item_label=str(result[1]),
             full_item_name=result[0],
             item_type_coverage=item_type_coverage,
             schema_name=row["inputs.schema_name"],
@@ -109,7 +111,7 @@ def flatten_outputs(pf_client: PFClient, flow_result: Run) -> pd.DataFrame:
 
     pf_run_name = flow_result.name
 
-    df = pd.DataFrame(pf_client.get_details(flow_result))
+    df = pd.DataFrame(pf_client.get_details(flow_result, all_results=True))
 
     required_c = set(output_colnames)
     df_c = set(df.columns)
@@ -118,6 +120,9 @@ def flatten_outputs(pf_client: PFClient, flow_result: Run) -> pd.DataFrame:
 
     outputs = []
     for index, row in df.iterrows():
+        if row["outputs.json_items"] == "(Failed)":
+            print(f"Failed row: {row}")
+
         out_list = extract_item(row, pf_run_name)
         for out in out_list:
             out_series = pd.Series(out.model_dump())

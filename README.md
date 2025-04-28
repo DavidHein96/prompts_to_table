@@ -10,6 +10,7 @@ Check out [the pre-print here](https://www.medrxiv.org/content/10.1101/2025.02.1
   - [Prompt flows](#prompt-flows)
     - [Prompt flow Structure](#prompt-flow-structure)
   - [Helper functions](#helper-functions)
+  - [Adding Connections](#adding-connections)
   - [Roadmap](#roadmap)
 
 ## Getting started
@@ -20,7 +21,7 @@ NOTE: In `.vscode/settings.json` I have the word wrap for .json files turned on.
 2. Adding connections: First you'll need to check out the [example.env](example.env) and create your own `.env` so that you have LLM connections available for Prompt flow to use
 3. Adding data: Data can be in either a csv format with the columns `report_id` and `report_text` or in a JSONL file with those same keys. See the [example jsonl data](/example_data/input/example_jsonl_data.jsonl) and [example csv data](/example_data/input/example_csv_data.csv)
 4. Running a batch: The [example_workbook](/example_workflow_notebook.ipynb) walks through running a batch of data through the pipeline
-5. Modifying a schema: The schema can be modified to use different sets of labels and instructions. When adding a new entity, first determine what entity type it is (see below), and add it under the key for that entity type, along with the required fields. See [schema.py](/app/helper_functions/schema.py) for info on the required keys for each entity type. Also there are two included schemas, one for our kidney tumor reports, and one for our quick investigation of breast cancer reports.
+5. Modifying a schema: The schema can be modified to use different sets of labels and instructions. When adding a new entity, first determine what entity type it is (see below), and add it under the key for that entity type, along with the required fields. See [schema.py](/app/helper_functions/schema.py) for info on the required keys for each entity type. Also there are three included example schemas.
 6. Modifying prompts: If modifications to the prompt templates are needed, they can be found in the Jinja templates for the respective entity type (see below again)
 
 ## Tips for editing the schema & prompts
@@ -71,6 +72,46 @@ There are several helper function included for running flows, as well as utiliti
 - [fix_corrupted_json.py](/app/helper_functions/fix_corrupted_json.py) Contains helpers for fixing outputs from LLMs that may not be JSON serializable
 - [flat_results.py](/app/helper_functions/flat_results.py) Contains functions to extract and organize relevant portions of the JSON outputs into a nice table
 - [run_pf_wrapper.py](/app/helper_functions/run_pf_wrapper.py) This is the main wrapper function that sets up everything for a batch flow run
+
+## Adding Connections
+
+You need to define variables for *each connection name* you intend to use. The variables follow the pattern `{CONNECTION_NAME_UPPER}_VARIABLE_NAME`.
+
+* `{CONNECTION_NAME_UPPER}_API_TYPE`: The type of API. Must be either `azure` or `openai`.
+
+**If `API_TYPE` is `azure`:**
+
+* `{CONNECTION_NAME_UPPER}_API_KEY`: Your Azure OpenAI API key.
+* `{CONNECTION_NAME_UPPER}_API_BASE`: Your Azure OpenAI endpoint URL (e.g., `https://your-resource-name.openai.azure.com/`).
+* `{CONNECTION_NAME_UPPER}_API_VERSION`: The API version (e.g., `2024-02-01`).
+
+**If `API_TYPE` is `openai` (or compatible, like vLLM):**
+
+* `{CONNECTION_NAME_UPPER}_API_KEY`: Your API key (can often be a placeholder like "NA" if the endpoint doesn't require one, e.g., local vLLM).
+* `{CONNECTION_NAME_UPPER}_BASE_URL`: The base URL of the API endpoint (e.g., `https://api.openai.com/v1` or `http://localhost:8000/v1`).
+* _(Optional)_ `{CONNECTION_NAME_UPPER}_NAME`: A name for the connection (often same as `connection_name`).
+
+**Example `.env` file:**
+
+```dotenv
+# Example for an Azure OpenAI connection named 'azure_gpt4'
+AZURE_GPT4_API_TYPE=azure
+AZURE_GPT4_API_KEY=your_azure_api_key_here
+AZURE_GPT4_API_BASE=https://your_[resource.openai.azure.com/](https://resource.openai.azure.com/)
+AZURE_GPT4_API_VERSION=2024-02-15-preview
+
+# Example for a standard OpenAI connection named 'openai_gpt35'
+OPENAI_GPT35_API_TYPE=openai
+OPENAI_GPT35_API_KEY=your_openai_api_key_here
+OPENAI_GPT35_BASE_URL=[https://api.openai.com/v1](https://api.openai.com/v1)
+OPENAI_GPT35_NAME=openai_gpt35
+
+# Example for a local vLLM connection named 'local_llama'
+LOCAL_LLAMA_API_TYPE=openai
+LOCAL_LLAMA_API_KEY=NA
+LOCAL_LLAMA_BASE_URL=http://localhost:8000/v1
+LOCAL_LLAMA_NAME=local_llama
+```
 
 ## Roadmap
 

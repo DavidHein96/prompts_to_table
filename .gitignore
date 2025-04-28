@@ -10,3 +10,5 @@ OLD/
 .venv
 *.env
 !example.env
+archive/
+/.quarto/

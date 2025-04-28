@@ -1,4 +1,4 @@
-""" This module contains functions to prepare and validate the data/schema for the promptflow. """
+"""This module contains functions to prepare and validate the data/schema for the promptflow."""
 
 from pathlib import Path
 
@@ -78,6 +78,26 @@ def _load_and_validate_schema(
     return schema
 
 
+def _filter_by_csv(csv_to_filter: FilePath, data: pd.DataFrame) -> pd.DataFrame:
+
+    filter_data = pd.read_csv(csv_to_filter)
+    # ensure the filter data contains the column 'report_id'
+    if "report_id" not in filter_data.columns:
+        raise ValueError("The filter data must contain the column 'report_id'.")
+
+    # check that all of the ids in the filter data are in the main data
+    if not all(
+        [id in data["report_id"].values for id in filter_data["report_id"].values]
+    ):
+        raise ValueError(
+            "The filter data contains report_ids not present in the main data."
+        )
+
+    # filter the main data to keep only the rows with report_ids in the filter data
+    data = data[data["report_id"].isin(filter_data["report_id"])]
+    return data
+
+
 def prep_data(
     data_path: FilePath,
     schema_path: FilePath,
@@ -87,12 +107,16 @@ def prep_data(
     connection_model: str,
     api_type: Literal["azure", "openai"],
     output_path: DirectoryPath = "app/tmp",
+    csv_to_filter: FilePath = None,
 ) -> FilePath:
     """We write the prepared data to a JSONL as input into pf.run()"""
 
     data = _load_and_validate_dataframe(data_path)
 
     _load_and_validate_schema(schema_path, item_type_coverage, item_name)
+
+    if csv_to_filter is not None:
+        data = _filter_by_csv(csv_to_filter, data)
 
     # iterate through the rows of the data
     input_items = []
@@ -101,7 +125,7 @@ def prep_data(
 
     # generate a run batch name
     date_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    run_batch_name = f"{data_name}_{schmea_name}_{connection_name}_{connection_model}_{item_type_coverage}_{item_name}_{date_time}"
+    run_batch_name = f"{data_name}_{schmea_name}_{connection_name}_{item_type_coverage}_{item_name}_{date_time}"
 
     for index, row in data.iterrows():
 

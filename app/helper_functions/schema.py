@@ -1,4 +1,4 @@
-""" Defines some basic classes for organizing data flow and validating the extraction schema """
+"""Defines some basic classes for organizing data flow and validating the extraction schema"""
 
 from typing import Optional, Literal, Union
 from pydantic import BaseModel
@@ -26,7 +26,7 @@ class FeatureReport(Item):
 
     item_type: str = "feature"
     item_coverage: str = "report"
-    feature_labels: list[str]
+    feature_labels: Union[list[str], dict[str, list[str]]]
     segment_feature_instructions: str
     standardize_feature_instructions: str
 
@@ -38,7 +38,7 @@ class FeatureSpecimen(Item):
 
     item_type: str = "feature"
     item_coverage: str = "specimen"
-    feature_labels: list[str]
+    feature_labels: Union[list[str], dict[str, list[str]]]
     segment_feature_instructions: str
     standardize_feature_instructions: str
 
