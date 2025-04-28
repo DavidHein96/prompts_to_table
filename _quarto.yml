@@ -1,0 +1,19 @@
+project:
+  type: website
+  render:
+    - "*.qmd"
+    - "!example_workflow_notebook.ipynb"
+
+website:
+  title: "."
+  navbar:
+    left:
+      - href: docs/index.qmd
+        text: Home
+      - docs/about.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: docs/styles.css
+    toc: true
