@@ -1,8 +1,0 @@
-.env
-/app/*
-/archive/*
-/.quarto/
-/_site/
-/example_data/*
-.DS_Store
-.venv
