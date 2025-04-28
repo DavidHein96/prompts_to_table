@@ -1,0 +1,8 @@
+/.quarto/
+app/
+archive/
+.venv/
+example_data/
+.env/
+*.pyc
+*.pyo
