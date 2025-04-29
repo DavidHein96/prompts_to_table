@@ -3,7 +3,7 @@ title: "Prompts to Table: Structured Data Extraction with Promptflow"
 ---
 
 Welcome to the **Prompts to table** code repo! This contains some code to get started using this workflow for information extraction from medical texts.
-Check out [the pre-print here.](https://www.medrxiv.org/content/10.1101/2025.02.11.25322107v1)
+Check out [the pre-print here.](https://www.medrxiv.org/content/10.1101/2025.02.11.25322107v2)
 
 ## What is this?
 
@@ -29,7 +29,7 @@ The overall workflow is as follows:
 
 * **Schemas:** The heart of the process. Define your desired output structure, labels, and entity specific LLM guidance. *(See the [Schema Guide](docs/guides_tutorials/editing_schemas.qmd))*
 * **Promptflow Engine:** Provides the robust backend for workflow execution, logging, and scalability.
-* **Flexible Flows:** Tailor extraction to different data scopes (report/specimen) and types (feature/panel). *(Learn more in [Flow Types](docs/guides_tutorials/flows.qmd) - You'll need to create this page)*
+* **Flexible Flows:** Tailor extraction to different data scopes (report/specimen) and types (feature/panel). *(Learn more in [Flow Types](docs/guides_tutorials/flows.qmd)
 * **Simplified Interface:** Primarily interact via the main wrapper function. *(See the [Quickstart](docs/quickstart.qmd) or [API Reference](docs/code_reference/run_pf_wrapper.qmd))*
 * **Helper Utilities:** Tools for data prep, result flattening, and even attempting to fix malformed JSON. *(Explore the [API Reference](docs/code_reference/))*
 

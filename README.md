@@ -3,6 +3,8 @@
 Welcome to the Prompts 2 table code repo! This contains some code to get started using this workflow for information extraction from medical texts
 Check out [the pre-print here](https://www.medrxiv.org/content/10.1101/2025.02.11.25322107v1)
 
+And the interactive docs page [here](https://davidhein96.github.io/prompts_to_table/)
+
 - [Prompts 2 Table](#prompts-2-table)
   - [Getting started](#getting-started)
   - [Tips for editing the schema \& prompts](#tips-for-editing-the-schema--prompts)
@@ -77,41 +79,7 @@ There are several helper function included for running flows, as well as utiliti
 
 You need to define variables for *each connection name* you intend to use. The variables follow the pattern `{CONNECTION_NAME_UPPER}_VARIABLE_NAME`.
 
-* `{CONNECTION_NAME_UPPER}_API_TYPE`: The type of API. Must be either `azure` or `openai`.
-
-**If `API_TYPE` is `azure`:**
-
-* `{CONNECTION_NAME_UPPER}_API_KEY`: Your Azure OpenAI API key.
-* `{CONNECTION_NAME_UPPER}_API_BASE`: Your Azure OpenAI endpoint URL (e.g., `https://your-resource-name.openai.azure.com/`).
-* `{CONNECTION_NAME_UPPER}_API_VERSION`: The API version (e.g., `2024-02-01`).
-
-**If `API_TYPE` is `openai` (or compatible, like vLLM):**
-
-* `{CONNECTION_NAME_UPPER}_API_KEY`: Your API key (can often be a placeholder like "NA" if the endpoint doesn't require one, e.g., local vLLM).
-* `{CONNECTION_NAME_UPPER}_BASE_URL`: The base URL of the API endpoint (e.g., `https://api.openai.com/v1` or `http://localhost:8000/v1`).
-* _(Optional)_ `{CONNECTION_NAME_UPPER}_NAME`: A name for the connection (often same as `connection_name`).
-
-**Example `.env` file:**
-
-```dotenv
-# Example for an Azure OpenAI connection named 'azure_gpt4'
-AZURE_GPT4_API_TYPE=azure
-AZURE_GPT4_API_KEY=your_azure_api_key_here
-AZURE_GPT4_API_BASE=https://your_[resource.openai.azure.com/](https://resource.openai.azure.com/)
-AZURE_GPT4_API_VERSION=2024-02-15-preview
-
-# Example for a standard OpenAI connection named 'openai_gpt35'
-OPENAI_GPT35_API_TYPE=openai
-OPENAI_GPT35_API_KEY=your_openai_api_key_here
-OPENAI_GPT35_BASE_URL=[https://api.openai.com/v1](https://api.openai.com/v1)
-OPENAI_GPT35_NAME=openai_gpt35
-
-# Example for a local vLLM connection named 'local_llama'
-LOCAL_LLAMA_API_TYPE=openai
-LOCAL_LLAMA_API_KEY=NA
-LOCAL_LLAMA_BASE_URL=http://localhost:8000/v1
-LOCAL_LLAMA_NAME=local_llama
-```
+See the [example.env](./example.env) file for documentation
 
 ## Roadmap
 

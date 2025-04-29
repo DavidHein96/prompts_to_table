@@ -1,0 +1,18 @@
+
+::: {.callout-caution}
+## Page under construction
+:::
+
+#### Prompt flow Structure
+
+A typical Prompt flow consists of the following files:
+
+1. **load_[type]_[coverage].py:** This file contains code to load and prepare the input data for the Prompt flow.
+
+2. **segment_[type]_[coverage].jinja2:** This file contains a Jinja template for the prompt used in the segmentation step of the Prompt flow. The template includes placeholders for inserting specific information such as labels and custom instructions. The purpose of this LLM call is to segment the relevant text out of the report.
+
+3. **standardize_[type]_[coverage].jinja2:** This file contains a Jinja template for the prompt used in the standardization step of the Prompt flow. Similar to the segmentation template, it includes placeholders for specific information. The purpose of this flow is to make standardized data and labels from the segmented text.
+
+4. **build_output_[type]_[coverage].py:** This file contains code to combine the outputs from the previous steps, add metadata, and return the final output of the Prompt flow.
+
+5. **flow.dag.yaml:** This file defines the structure and configuration of the Prompt flow. It specifies the inputs, outputs, and nodes of the flow, along with their respective sources, inputs, and connections. If you have the Prompt flow VS Code tool installed you can open these up in a visual editor for a really nice view of the inputs and outputs of each node, the LLM connections being use and their settings, and a nice view of the DAG.

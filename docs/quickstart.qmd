@@ -1,5 +1,285 @@
 ---
 title: "Quickstart"
+execute:
+  eval: false
+  echo: true 
 ---
 
-About this site
+## Setting up the environment
+
+### Install uv 
+
+(if not already installed)
+
+**Windows**
+
+```bash
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+**macOS and Linux**
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### Clone repo
+
+```bash
+git clone https://github.com/DavidHein96/prompts_to_table.git
+cd prompts_to_table
+```
+
+### Create environment
+
+Running this in the root of the repo will create a new venv.
+
+```bash
+uv sync
+source .venv/bin/activate
+```
+
+## Add a connection
+
+The first thing to do is come up with a name for your connection. This can be anything you like, but it should be unique to avoid confusion. This is the name that you pass to the main promptflow wrapper function to select a connection at runtime.
+
+All connections are stored in the **.env** file in the root of the project. You can add a connection by adding new lines. All connections need a:
+
+* **CONNECTION_NAME:** The name of the connection. This is the name you will use to refer to this connection in your code.
+* **API_TYPE:** The type of API you are using. This can be either **openai** or **azure**.
+
+::: {.callout-warning}
+**API Keys:** Make sure your .env and API keys are not checked into code repos or shared publically.
+:::
+
+### Azure OpenAI
+
+Let's say I have two Azure OpenAI deployments, **one with GPT-4o** and **one with GPT-4o mini**. To add these we need:
+
+* **API_VERSION:** The version of the Azure OpenAI API to use. This usually looks like a date
+* **API_KEY:** The API key to use for authentication.
+* **DEPLOYMENT_NAME:** The name of the deployment to use. This is the name you gave your deployment when you created it in Azure.
+* **API_BASE:** The base URL for the Azure OpenAI API.
+
+Now with these, we can add each connection. Note that the connection name is the first part of each of the variable names, just in all caps.
+
+```markdown
+GPT4O_CONNECTION_NAME=gpt4o
+GPT4O_API_VERSION=2024-12-01-preview
+GPT4O_API_KEY=your_api_key
+GPT4O_DEPLOYMENT_NAME=your_deployment_name
+GPT4O_API_BASE=https://your_api_base
+GPT4O_API_TYPE=azure
+
+GPT4O_MINI_CONNECTION_NAME=gpt4o_mini
+GPT4O_MINI_API_VERSION=2024-12-01-preview
+GPT4O_MINI_API_KEY=your_api_key
+GPT4O_MINI_DEPLOYMENT_NAME=your_deployment_name
+GPT4O_MINI_API_BASE=https://your_api_base
+GPT4O_MINI_API_TYPE=azure
+
+```
+
+### OpenAI (vllm)
+
+To use open weight LLMs, I typically serve them locally with [vllm](https://docs.vllm.ai/en/latest/)
+
+For this, we change the API_TYPE to **openai** and add the model name, base URL, and API key. The API key is not used for authentication, but it is required by the library. The biggest changes are we now need:
+
+* **MODEL:** The name of the model to use. This is the name you used when you served the model with vllm.
+* **BASE_URL:** This is the address of where the model is being served. This replaces the API_BASE variable.
+
+Lets say I want to use Qwen 2.5 72B. If I serve the model with the following command:
+
+```bash
+vllm serve "Qwen/Qwen2.5-72B-Instruct-AWQ" \
+    --tensor-parallel 2 \
+    --max-num-seqs 8 \
+    --gpu_memory_utilization 0.92 \
+    --port 9001 \
+    --max-model-len 4096 \
+    --dtype float16 \
+    --quantization="awq"
+```
+
+Then I can add the connection to the **.env** file like this:
+
+```markdown
+QWEN_CONNECTION_NAME=qwen
+QWEN_API_TYPE=openai
+QWEN_MODEL=Qwen/Qwen2.5-72B-Instruct-AWQ
+QWEN_BASE_URL=http://127.0.0.1:9001/v1
+QWEN_API_KEY=EMPTY
+QWEN_DEPLOYMENT_NAME=Qwen2.5-72B-Instruct-AWQ
+```
+
+::: {.callout-note}
+Note that the API_KEY is EMPTY as we are running the model locally, and that the port, 9001, matches the port we are using to serve the model.
+:::
+
+## Data Format
+
+To use data, we expect either a csv or a jsonl file. The data needs to have the following as columns or keys:
+
+* **report_id:** An ID (string) that uniquely identifies the report.
+* **report_text:** The free text of the report. 
+
+Here is an example of a csv file:
+
+```csv
+report_id,report_text
+R1,"This is the first report. It is about something interesting."
+R2,"This is the second report. It is about something else interesting."
+```
+
+Here is an example of a jsonl file:
+```json
+{"report_id": "R1", "report_text": "This is the first report. It is about something interesting."}
+{"report_id": "R2", "report_text": "This is the second report. It is about something else interesting."}
+```
+
+::: {.callout-warning}
+**PHI:** Make sure data containing patient health information is not checked into version control. Also, make sure to follow your institution's policies on data sharing and storage.
+:::
+
+## Prompt flows
+
+There are three different prompt flows in the repo. These are:
+
+* **feature_report_flow:** Entities with one label per report
+* **feature_specimen_flow:** Entities with one label per specimen
+* **panel_specimen_flow:** Entities for which a panel of tests exist (like IHC/FISH) where we want the specimen, block, test name, and test result for all instances in the report
+
+Each of these subdirectories contains similar files and follows a consistent structure for defining and executing a Prompt flow. The prompts contains basic instructions for medical information extraction and examples of expected output format. They use the Jinja templating engine to allow for re-use across entity types.
+
+## Extraction Schemas
+
+The extraction schemas are defined in the **schemas** subdirectory. These are where we define the labels we want to extract from the report, as well as any entity specific instructions. They are defined in JSONs. The **file name** of the schema is used as the schema_name in the resulting output. The required top level keys are:
+
+* **report_type:** I use this as a top level organizer, so something like "pathology" or "radiology"
+* **report_subtype"** This is more of a sub-organizer, so something like "rcc" or "breast"
+
+Then there are keys for each entity type. They do not all have to be present. These keys are:
+
+* **feature_report:** One label per report
+* **feature_specimen:** One label per specimen
+* **panel_specimen:** One label per test specimen/block
+
+Within each of these keys we have the entities, with the top level key being the entity name. The value is a dictionary with keys determined by the entity type.
+
+### Feature report & feature specimen
+
+Both of these have the same structure. The keys are:
+
+* **feature_labels:** List of label options
+* **segment_feature_instructions:** Instructions for the LLM to segment relevant text from the report. These instructions are typically informing what portions of the report contain the likely relevant information.
+* **standardize_feature_instructions:** Instructions for the LLM to standardize the segmented text. These instructions are typically informing the LLM of extra domain specific knowledge for assigning labels.
+
+### Panel specimen
+
+The panel specimen schema is a bit different. The keys are:
+
+* **panel_test_names:** List of label options for names of individual tests
+* **panel_test_results:** List or structured vocabulary of label options for test results
+* **segment_1_panel_instructions:** Instructions for the LLM to segment relevant text from the report. This step is more broad than the second segment step, which organizes by specimen and block
+* **segment_2_panel_instructions:** Instructions for the LLM to segment and organize the segmented text by specimen and block.
+* **standardize_panel_instructions:** These instructions are typically informing the LLM of extra domain specific knowledge for standardizing test names and results.
+
+### Example schema
+
+Below is a simple example schema, for extracting a single diagnosis per report, the histology for each specimen, and a handful of IHC tests as a panel.
+
+```json
+{
+    "report_type": "pathology",
+    "report_subtype": "rcc",
+    "feature_report": {
+        "diagnosis": {
+            "feature_labels": ["RCC", "Urothelial Carcinoma", "Other"],
+            "segment_feature_instructions": "Segment the relevant text from the report that contains the diagnosis.",
+            "standardize_feature_instructions": "Standardize the diagnosis to one of the following labels: RCC, Urothelial Carcinoma, Other."
+        }
+    },
+    "feature_specimen": {
+        "histology": {
+            "feature_labels": ["RCC", "Urothelial Carcinoma", "Other"],
+            "segment_feature_instructions": "Segment the relevant text from the report that contains the histology.",
+            "standardize_feature_instructions": "Standardize the histology to one of the following labels: RCC, Urothelial Carcinoma, Other."
+        }
+    },
+    "panel_specimen": {
+        "immunohistochemistry": {
+            "panel_test_names": ["IHC1", "IHC2", "IHC3"],
+            "panel_test_results": ["Positive", "Negative", "Weakly Positive"],
+            "segment_1_panel_instructions": "Segment the relevant text from the report that contains the IHC tests.",
+            "segment_2_panel_instructions": "Segment the relevant text from the report that contains the specimen and block information.",
+            "standardize_panel_instructions": "Standardize the IHC test names and results to one of the following labels: IHC1, IHC2, IHC3 for test names and Positive, Negative, Weakly Positive for test results."
+        }
+    }
+}
+
+```
+
+
+## Running the flow
+
+Great, now that we've covered the basics, let's try running the flow. 
+
+::: {.callout-tip}
+Check out the recommended VS Code plug ins for running the example Jupyter notebook
+:::
+
+Using a jupyter notebook, we can run the flow with the following code to import the required libraries and create a Prompt flow client object.
+
+```python
+# First import the PFClient to use the client to interact with PromptFlow
+# Then there are some helper functions that are used to run the flow and get the results
+from promptflow.client import PFClient
+from app.helper_functions.run_pf_wrapper import pf_batch_run_wrapper
+from app.helper_functions.flat_results import flatten_outputs
+from app.helper_functions.get_json_outputs import get_json_outputs
+
+# Creating the client
+pf_client = PFClient()
+```
+
+Now we need to decide on our run time parameters. These are:
+
+* **data_path (FilePath):** Path to either a CSV or JSONL file. The data needs to contain a report_id and report_text column/field.
+* **schema_path (FilePath):** Path to a JSON schema file
+* **item_name (str):** Name of the item to be processed, should be a key under one of the item types in the schema
+* **connection_name (str):** Name of the connection to be used as per the .env file
+* **pf_worker_count (int, optional):** Number of workers to use for the batch job. Defaults to 4.
+* **flush_intermediate_data (bool, optional):** The intermediate data that is passed to pf.run is deleted by default, but it is interesting to look at and can also be used for debugging. If set to false it will be under app/tmp. 
+* **csv_to_filter (FilePath, optional):** Path to a CSV file to filter the data by report_id. Defaults to None.
+
+
+Now lets run the flow. A batch job starts and a Prompt flow run object is created.
+
+```python
+flow_result_diagnosis = pf_batch_run_wrapper(
+    pf_client, 
+    data_path="example_data/input/example_jsonl_data.jsonl",
+    schema_path="app/schemas/pathology_rcc_schema_v12.json",
+    item_name="diagnosis", 
+    connection_name="qwen", 
+    pf_worker_count=2
+)
+```
+
+We can now use some helper functions to save the output as a CSV and a JSON
+
+```python
+# This handy function extracts and organizes the results in a neat dataframe 
+flat_df_diag = flatten_outputs(pf_client=pf_client, flow_result=flow_result_diagnosis)
+
+# This dataframe can then be saved as a csv file
+flat_df_diag.to_csv("example_data/output_flat/diagnosis.csv", index=False)
+
+# This function gets the full JSON outputs from the flow so you can check out the reasoning sections
+json_outs_diag = get_json_outputs(pf_client=pf_client, flow_result=flow_result_diagnosis)
+
+# This can be saved to a JSON file
+json_outs_diag.to_json('example_data/output_json/diagnosis.json', orient='index')
+```
+

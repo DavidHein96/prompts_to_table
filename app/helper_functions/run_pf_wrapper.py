@@ -100,8 +100,8 @@ def _get_item_type_coverage(
 
 
 def _create_or_update_connections(
-    pf_client: PFClient, connection_name: str, connection_model: str
-) -> str:
+    pf_client: PFClient, connection_name: str
+) -> tuple[str, str]:
     """Helps create or update connections based on the env vars
     NOTE: This is set up to use the openai connection in the context of vllm"""
 
@@ -118,8 +118,10 @@ def _create_or_update_connections(
             api_type=os.getenv(f"{connection_name.upper()}_API_TYPE"),
             api_version=os.getenv(f"{connection_name.upper()}_API_VERSION"),
         )
+        connection_model = os.getenv(f"{connection_name.upper()}_DEPLOYMENT_NAME")
         result = pf_client.connections.create_or_update(connection)
     elif api_type == "openai":
+        connection_model = os.getenv(f"{connection_name.upper()}_MODEL")
         connection = OpenAIConnection(
             name=os.getenv(f"{connection_name.upper()}_NAME"),
             model=connection_model,
@@ -132,7 +134,7 @@ def _create_or_update_connections(
             "Invalid API type. Supports 'azure' and 'openai'. The openai api type can be used with vllm"
         )
     logging.info(f"Connection {connection_name} created or updated. {result}")
-    return api_type
+    return api_type, connection_model
 
 
 def _build_connection_override(
@@ -165,7 +167,6 @@ def pf_batch_run_wrapper(
     schema_path: FilePath,
     item_name: str,
     connection_name: str,
-    connection_model: str,
     pf_worker_count: int = 4,
     flush_intermediate_data: bool = True,
     csv_to_filter: FilePath = None,
@@ -178,7 +179,6 @@ def pf_batch_run_wrapper(
         schema_path (FilePath): Path to a JSON schema file
         item_name (str): Name of the item to be processed, should be a key under one of the item types in the schema
         connection_name (str): Name of the connection to be used as per the .env file
-        connection_model (str): Name of the model OR deployment to be used. Azure uses deployment, OpenAI uses model
         pf_worker_count (int, optional): Number of workers to use for the batch job. Defaults to 4.
         flush_intermediate_data (bool, optional): The intermediate data that is passed to pf.run is deleted by default, but it is interesting to look at and can also be used for debugging. If set to false it will be under app/tmp. Importantly there is a gitignore there so data wont be checked into code version control. Defaults to True.
         csv_to_filter (FilePath, optional): Path to a CSV file to filter the data by report_id. Defaults to None.
@@ -192,8 +192,8 @@ def pf_batch_run_wrapper(
 
     item_type_coverage = _get_item_type_coverage(schema_path, item_name)
 
-    api_type = _create_or_update_connections(
-        pf_client, connection_name, connection_model
+    api_type, connection_model = _create_or_update_connections(
+        pf_client, connection_name
     )
 
     connection_override = _build_connection_override(
