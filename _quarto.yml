@@ -2,18 +2,54 @@ project:
   type: website
   render:
     - "*.qmd"
-    - "!example_workflow_notebook.ipynb"
+    - "!example_workflow_notebook.ipynb" 
 
 website:
-  title: "."
+  title: "Prompts to Table"
   navbar:
     left:
-      - href: docs/index.qmd
+      - href: index.qmd
         text: Home
-      - docs/about.qmd
+      - href: docs/quickstart.qmd
+        text: Quickstart
+      - text: "Guides & Tutorials"
+        menu:
+          - text: "Basic Usage"
+            href: docs/guides_tutorials/basic_usage.qmd
+          - text: "Flow Types"
+            href: docs/guides_tutorials/flows.qmd
+          - text: "Editing Schemas"
+            href: docs/guides_tutorials/editing_schemas.qmd
+          - text: "Editing Prompts"
+            href: docs/guides_tutorials/editing_prompts.qmd
+          - text: "Adding Connections"
+            href: docs/guides_tutorials/adding_connections.qmd
+      - text: "Code References"
+        menu:
+          - href: docs/code_reference/run_pf_wrapper.qmd
+            text: Batch Runner (`run_pf_wrapper`)
+          - href: docs/code_reference/prep_data.qmd
+            text: Data Preparation (`prep_data`)
+          - href: docs/code_reference/flat_results.qmd
+            text: Flattening Results (`flat_results`)
+          - href: docs/code_reference/schemas.qmd
+            text: Data Schemas (`schema.py`)
+          - href: docs/code_reference/utilities.qmd
+            text: Utilities
+
+    right:
+      - icon: github
+        href: "https://github.com/DavidHein96/prompts_to_table"
+        aria-label: GitHub repository
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: cosmo 
+      dark: darkly
     css: docs/styles.css
     toc: true
+    code-fold: true
+    code-copy: true
+    page-layout: full
+    code-overflow: wrap

@@ -1,0 +1,48 @@
+---
+title: "Prompts to Table: Structured Data Extraction with Promptflow"
+---
+
+Welcome to the **Prompts to table** code repo! This contains some code to get started using this workflow for information extraction from medical texts.
+Check out [the pre-print here.](https://www.medrxiv.org/content/10.1101/2025.02.11.25322107v1)
+
+## What is this?
+
+This repository contains code to extract structured data from unstructured text using a prompt-based approach. The goal is to convert free-text medical information into a structured format that can be easily analyzed and processed.
+
+![Prompts to Table Workflow](docs/P2T_Gitlab_figure.jpeg)
+
+## How does it work?
+
+The overall workflow is as follows:
+
+1.  **Define Your Target:** You create an extraction schema specifying *what* information you want to extract (e.g., item names, expected labels/values) and entity specific instructions to guide the LLM.
+2.  **Run the Pipeline:** Using the core `pf_batch_run_wrapper` function, you point the toolkit to your input data (CSV or JSONL files containing report text) and your schema.
+3.  **Automated Processing:** The toolkit leverages **Microsoft Promptflow** to:
+    * Manage connections to LLMs (Azure OpenAI or standard OpenAI-compatible APIs).
+    * Orchestrate the extraction workflow based on your schema (supporting different patterns like report-level vs. specimen-level features or panels).
+    * Process reports efficiently in **batches** with configurable parallelism.
+    * Handle intermediate data preparation and cleanup.
+4.  **Structured Output:** The final, complex JSON output from Promptflow can be easily converted into a flat, analysis-ready pandas DataFrame using the `flatten_outputs` utility function.
+
+
+## Key Concepts
+
+* **Schemas:** The heart of the process. Define your desired output structure, labels, and entity specific LLM guidance. *(See the [Schema Guide](docs/guides_tutorials/editing_schemas.qmd))*
+* **Promptflow Engine:** Provides the robust backend for workflow execution, logging, and scalability.
+* **Flexible Flows:** Tailor extraction to different data scopes (report/specimen) and types (feature/panel). *(Learn more in [Flow Types](docs/guides_tutorials/flows.qmd) - You'll need to create this page)*
+* **Simplified Interface:** Primarily interact via the main wrapper function. *(See the [Quickstart](docs/quickstart.qmd) or [API Reference](docs/code_reference/run_pf_wrapper.qmd))*
+* **Helper Utilities:** Tools for data prep, result flattening, and even attempting to fix malformed JSON. *(Explore the [API Reference](docs/code_reference/))*
+
+## Getting Started
+
+This project utilizes [uv](https://docs.astral.sh/uv/) for managing the environment and dependencies. To get started, see the [Quickstart](docs/quickstart.qmd) guide. This will walk you through setting up your environment, installing dependencies, and running the first example.
+
+The main orchestration code is located in `app/helper_functions` and can be imported into notebooks or scripts. The main function to run the pipeline is `pf_batch_run_wrapper`, which takes care of most of the heavy lifting. 
+
+## Prompt flows
+
+The **app** directory contains three subdirectories, each representing a specific type of data extraction flow. See the [Flow Types](docs/guides_tutorials/flows.qmd) guide for more details on how to use these flows.
+
+## Supported Models
+
+Currently supported are OpenAI models through Azure, and OpenAI-compatible APIs. Instructions for adding connections is found in guides [here](docs/guides_tutorials/adding_connections.qmd).
