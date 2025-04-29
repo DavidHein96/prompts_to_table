@@ -1,15 +1,57 @@
 [
   {
-    "objectID": "docs/index.html",
-    "href": "docs/index.html",
-    "title": ".",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Prompts to Table: Structured Data Extraction with Promptflow",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+    "text": "Welcome to the Prompts to table code repo! This contains some code to get started using this workflow for information extraction from medical texts. Check out the pre-print here."
   },
   {
-    "objectID": "docs/about.html",
-    "href": "docs/about.html",
-    "title": "About",
+    "objectID": "index.html#what-is-this",
+    "href": "index.html#what-is-this",
+    "title": "Prompts to Table: Structured Data Extraction with Promptflow",
+    "section": "What is this?",
+    "text": "What is this?\nThis repository contains code to extract structured data from unstructured text using a prompt-based approach. The goal is to convert free-text medical information into a structured format that can be easily analyzed and processed.\n\n\n\nPrompts to Table Workflow"
+  },
+  {
+    "objectID": "index.html#how-does-it-work",
+    "href": "index.html#how-does-it-work",
+    "title": "Prompts to Table: Structured Data Extraction with Promptflow",
+    "section": "How does it work?",
+    "text": "How does it work?\nThe overall workflow is as follows:\n\nDefine Your Target: You create an extraction schema specifying what information you want to extract (e.g., item names, expected labels/values) and entity specific instructions to guide the LLM.\nRun the Pipeline: Using the core pf_batch_run_wrapper function, you point the toolkit to your input data (CSV or JSONL files containing report text) and your schema.\nAutomated Processing: The toolkit leverages Microsoft Promptflow to:\n\nManage connections to LLMs (Azure OpenAI or standard OpenAI-compatible APIs).\nOrchestrate the extraction workflow based on your schema (supporting different patterns like report-level vs. specimen-level features or panels).\nProcess reports efficiently in batches with configurable parallelism.\nHandle intermediate data preparation and cleanup.\n\nStructured Output: The final, complex JSON output from Promptflow can be easily converted into a flat, analysis-ready pandas DataFrame using the flatten_outputs utility function."
+  },
+  {
+    "objectID": "index.html#key-concepts",
+    "href": "index.html#key-concepts",
+    "title": "Prompts to Table: Structured Data Extraction with Promptflow",
+    "section": "Key Concepts",
+    "text": "Key Concepts\n\nSchemas: The heart of the process. Define your desired output structure, labels, and entity specific LLM guidance. (See the Schema Guide)\nPromptflow Engine: Provides the robust backend for workflow execution, logging, and scalability.\nFlexible Flows: Tailor extraction to different data scopes (report/specimen) and types (feature/panel). (Learn more in Flow Types - You’ll need to create this page)\nSimplified Interface: Primarily interact via the main wrapper function. (See the Quickstart or API Reference)\nHelper Utilities: Tools for data prep, result flattening, and even attempting to fix malformed JSON. (Explore the API Reference)"
+  },
+  {
+    "objectID": "index.html#getting-started",
+    "href": "index.html#getting-started",
+    "title": "Prompts to Table: Structured Data Extraction with Promptflow",
+    "section": "Getting Started",
+    "text": "Getting Started\nThis project utilizes uv for managing the environment and dependencies. To get started, see the Quickstart guide. This will walk you through setting up your environment, installing dependencies, and running the first example.\nThe main orchestration code is located in app/helper_functions and can be imported into notebooks or scripts. The main function to run the pipeline is pf_batch_run_wrapper, which takes care of most of the heavy lifting."
+  },
+  {
+    "objectID": "index.html#prompt-flows",
+    "href": "index.html#prompt-flows",
+    "title": "Prompts to Table: Structured Data Extraction with Promptflow",
+    "section": "Prompt flows",
+    "text": "Prompt flows\nThe app directory contains three subdirectories, each representing a specific type of data extraction flow. See the Flow Types guide for more details on how to use these flows."
+  },
+  {
+    "objectID": "index.html#supported-models",
+    "href": "index.html#supported-models",
+    "title": "Prompts to Table: Structured Data Extraction with Promptflow",
+    "section": "Supported Models",
+    "text": "Supported Models\nCurrently supported are OpenAI models through Azure, and OpenAI-compatible APIs. Instructions for adding connections is found in guides here."
+  },
+  {
+    "objectID": "docs/quickstart.html",
+    "href": "docs/quickstart.html",
+    "title": "Quickstart",
     "section": "",
     "text": "About this site"
   }

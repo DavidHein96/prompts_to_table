@@ -1,11 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://DavidHein96.github.io/prompts_to_table/docs/index.html</loc>
-    <lastmod>2025-04-28T22:30:24.858Z</lastmod>
+    <loc>https://DavidHein96.github.io/prompts_to_table/index.html</loc>
+    <lastmod>2025-04-29T00:40:05.548Z</lastmod>
   </url>
   <url>
-    <loc>https://DavidHein96.github.io/prompts_to_table/docs/about.html</loc>
-    <lastmod>2025-04-28T22:30:24.859Z</lastmod>
+    <loc>https://DavidHein96.github.io/prompts_to_table/docs/guides_tutorials/flows.html</loc>
+    <lastmod>2025-04-29T00:25:53.088Z</lastmod>
+  </url>
+  <url>
+    <loc>https://DavidHein96.github.io/prompts_to_table/docs/guides_tutorials/editing_prompts.html</loc>
+    <lastmod>2025-04-29T00:05:03.443Z</lastmod>
+  </url>
+  <url>
+    <loc>https://DavidHein96.github.io/prompts_to_table/docs/guides_tutorials/adding_connections.html</loc>
+    <lastmod>2025-04-28T23:54:47.316Z</lastmod>
+  </url>
+  <url>
+    <loc>https://DavidHein96.github.io/prompts_to_table/docs/code_reference/schemas.html</loc>
+    <lastmod>2025-04-28T23:56:00.520Z</lastmod>
+  </url>
+  <url>
+    <loc>https://DavidHein96.github.io/prompts_to_table/docs/code_reference/prep_data.html</loc>
+    <lastmod>2025-04-28T23:55:37.863Z</lastmod>
+  </url>
+  <url>
+    <loc>https://DavidHein96.github.io/prompts_to_table/docs/code_reference/flat_results.html</loc>
+    <lastmod>2025-04-28T23:55:49.073Z</lastmod>
+  </url>
+  <url>
+    <loc>https://DavidHein96.github.io/prompts_to_table/docs/code_reference/run_pf_wrapper.html</loc>
+    <lastmod>2025-04-28T23:55:24.718Z</lastmod>
+  </url>
+  <url>
+    <loc>https://DavidHein96.github.io/prompts_to_table/docs/code_reference/utilities.html</loc>
+    <lastmod>2025-04-28T23:56:14.542Z</lastmod>
+  </url>
+  <url>
+    <loc>https://DavidHein96.github.io/prompts_to_table/docs/guides_tutorials/basic_usage.html</loc>
+    <lastmod>2025-04-28T23:28:17.815Z</lastmod>
+  </url>
+  <url>
+    <loc>https://DavidHein96.github.io/prompts_to_table/docs/guides_tutorials/editing_schemas.html</loc>
+    <lastmod>2025-04-28T23:53:47.344Z</lastmod>
+  </url>
+  <url>
+    <loc>https://DavidHein96.github.io/prompts_to_table/docs/quickstart.html</loc>
+    <lastmod>2025-04-28T23:59:05.054Z</lastmod>
   </url>
 </urlset>
