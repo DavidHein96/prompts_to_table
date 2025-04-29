@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -171,11 +205,36 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setting-up-the-environment" id="toc-setting-up-the-environment" class="nav-link active" data-scroll-target="#setting-up-the-environment">Setting up the environment</a>
+  <ul class="collapse">
+  <li><a href="#install-uv" id="toc-install-uv" class="nav-link" data-scroll-target="#install-uv">Install uv</a></li>
+  <li><a href="#clone-repo" id="toc-clone-repo" class="nav-link" data-scroll-target="#clone-repo">Clone repo</a></li>
+  <li><a href="#create-environment" id="toc-create-environment" class="nav-link" data-scroll-target="#create-environment">Create environment</a></li>
+  </ul></li>
+  <li><a href="#add-a-connection" id="toc-add-a-connection" class="nav-link" data-scroll-target="#add-a-connection">Add a connection</a>
+  <ul class="collapse">
+  <li><a href="#azure-openai" id="toc-azure-openai" class="nav-link" data-scroll-target="#azure-openai">Azure OpenAI</a></li>
+  <li><a href="#openai-vllm" id="toc-openai-vllm" class="nav-link" data-scroll-target="#openai-vllm">OpenAI (vllm)</a></li>
+  </ul></li>
+  <li><a href="#data-format" id="toc-data-format" class="nav-link" data-scroll-target="#data-format">Data Format</a></li>
+  <li><a href="#prompt-flows" id="toc-prompt-flows" class="nav-link" data-scroll-target="#prompt-flows">Prompt flows</a></li>
+  <li><a href="#extraction-schemas" id="toc-extraction-schemas" class="nav-link" data-scroll-target="#extraction-schemas">Extraction Schemas</a>
+  <ul class="collapse">
+  <li><a href="#feature-report-feature-specimen" id="toc-feature-report-feature-specimen" class="nav-link" data-scroll-target="#feature-report-feature-specimen">Feature report &amp; feature specimen</a></li>
+  <li><a href="#panel-specimen" id="toc-panel-specimen" class="nav-link" data-scroll-target="#panel-specimen">Panel specimen</a></li>
+  <li><a href="#example-schema" id="toc-example-schema" class="nav-link" data-scroll-target="#example-schema">Example schema</a></li>
+  </ul></li>
+  <li><a href="#running-the-flow" id="toc-running-the-flow" class="nav-link" data-scroll-target="#running-the-flow">Running the flow</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -184,7 +243,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     
   
@@ -196,9 +255,276 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>About this site</p>
+<section id="setting-up-the-environment" class="level2">
+<h2 class="anchored" data-anchor-id="setting-up-the-environment">Setting up the environment</h2>
+<section id="install-uv" class="level3">
+<h3 class="anchored" data-anchor-id="install-uv">Install uv</h3>
+<p>(if not already installed)</p>
+<p><strong>Windows</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">powershell</span> <span class="at">-ExecutionPolicy</span> ByPass <span class="at">-c</span> <span class="st">"irm https://astral.sh/uv/install.ps1 | iex"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>macOS and Linux</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="clone-repo" class="level3">
+<h3 class="anchored" data-anchor-id="clone-repo">Clone repo</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/DavidHein96/prompts_to_table.git</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> prompts_to_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="create-environment" class="level3">
+<h3 class="anchored" data-anchor-id="create-environment">Create environment</h3>
+<p>Running this in the root of the repo will create a new venv.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .venv/bin/activate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="add-a-connection" class="level2">
+<h2 class="anchored" data-anchor-id="add-a-connection">Add a connection</h2>
+<p>The first thing to do is come up with a name for your connection. This can be anything you like, but it should be unique to avoid confusion. This is the name that you pass to the main promptflow wrapper function to select a connection at runtime.</p>
+<p>All connections are stored in the <strong>.env</strong> file in the root of the project. You can add a connection by adding new lines. All connections need a:</p>
+<ul>
+<li><strong>CONNECTION_NAME:</strong> The name of the connection. This is the name you will use to refer to this connection in your code.</li>
+<li><strong>API_TYPE:</strong> The type of API you are using. This can be either <strong>openai</strong> or <strong>azure</strong>.</li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>API Keys:</strong> Make sure your .env and API keys are not checked into code repos or shared publically.</p>
+</div>
+</div>
+<section id="azure-openai" class="level3">
+<h3 class="anchored" data-anchor-id="azure-openai">Azure OpenAI</h3>
+<p>Let’s say I have two Azure OpenAI deployments, <strong>one with GPT-4o</strong> and <strong>one with GPT-4o mini</strong>. To add these we need:</p>
+<ul>
+<li><strong>API_VERSION:</strong> The version of the Azure OpenAI API to use. This usually looks like a date</li>
+<li><strong>API_KEY:</strong> The API key to use for authentication.</li>
+<li><strong>DEPLOYMENT_NAME:</strong> The name of the deployment to use. This is the name you gave your deployment when you created it in Azure.</li>
+<li><strong>API_BASE:</strong> The base URL for the Azure OpenAI API.</li>
+</ul>
+<p>Now with these, we can add each connection. Note that the connection name is the first part of each of the variable names, just in all caps.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>GPT4O_CONNECTION_NAME=gpt4o</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>GPT4O_API_VERSION=2024-12-01-preview</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>GPT4O_API_KEY=your_api_key</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>GPT4O_DEPLOYMENT_NAME=your_deployment_name</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>GPT4O_API_BASE=https://your_api_base</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>GPT4O_API_TYPE=azure</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>GPT4O_MINI_CONNECTION_NAME=gpt4o_mini</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>GPT4O_MINI_API_VERSION=2024-12-01-preview</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>GPT4O_MINI_API_KEY=your_api_key</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>GPT4O_MINI_DEPLOYMENT_NAME=your_deployment_name</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>GPT4O_MINI_API_BASE=https://your_api_base</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>GPT4O_MINI_API_TYPE=azure</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="openai-vllm" class="level3">
+<h3 class="anchored" data-anchor-id="openai-vllm">OpenAI (vllm)</h3>
+<p>To use open weight LLMs, I typically serve them locally with <a href="https://docs.vllm.ai/en/latest/">vllm</a></p>
+<p>For this, we change the API_TYPE to <strong>openai</strong> and add the model name, base URL, and API key. The API key is not used for authentication, but it is required by the library. The biggest changes are we now need:</p>
+<ul>
+<li><strong>MODEL:</strong> The name of the model to use. This is the name you used when you served the model with vllm.</li>
+<li><strong>BASE_URL:</strong> This is the address of where the model is being served. This replaces the API_BASE variable.</li>
+</ul>
+<p>Lets say I want to use Qwen 2.5 72B. If I serve the model with the following command:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vllm</span> serve <span class="st">"Qwen/Qwen2.5-72B-Instruct-AWQ"</span> <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">--tensor-parallel</span> 2 <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">--max-num-seqs</span> 8 <span class="dt">\</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">--gpu_memory_utilization</span> 0.92 <span class="dt">\</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">--port</span> 9001 <span class="dt">\</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">--max-model-len</span> 4096 <span class="dt">\</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">--dtype</span> float16 <span class="dt">\</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">--quantization</span><span class="op">=</span><span class="st">"awq"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then I can add the connection to the <strong>.env</strong> file like this:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>QWEN_CONNECTION_NAME=qwen</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>QWEN_API_TYPE=openai</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>QWEN_MODEL=Qwen/Qwen2.5-72B-Instruct-AWQ</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>QWEN_BASE_URL=http://127.0.0.1:9001/v1</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>QWEN_API_KEY=EMPTY</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>QWEN_DEPLOYMENT_NAME=Qwen2.5-72B-Instruct-AWQ</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note that the API_KEY is EMPTY as we are running the model locally, and that the port, 9001, matches the port we are using to serve the model.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="data-format" class="level2">
+<h2 class="anchored" data-anchor-id="data-format">Data Format</h2>
+<p>To use data, we expect either a csv or a jsonl file. The data needs to have the following as columns or keys:</p>
+<ul>
+<li><strong>report_id:</strong> An ID (string) that uniquely identifies the report.</li>
+<li><strong>report_text:</strong> The free text of the report.</li>
+</ul>
+<p>Here is an example of a csv file:</p>
+<pre class="csv"><code>report_id,report_text
+R1,"This is the first report. It is about something interesting."
+R2,"This is the second report. It is about something else interesting."</code></pre>
+<p>Here is an example of a jsonl file:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">"report_id"</span><span class="fu">:</span> <span class="st">"R1"</span><span class="fu">,</span> <span class="dt">"report_text"</span><span class="fu">:</span> <span class="st">"This is the first report. It is about something interesting."</span><span class="fu">}</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">"report_id"</span><span class="fu">:</span> <span class="st">"R2"</span><span class="fu">,</span> <span class="dt">"report_text"</span><span class="fu">:</span> <span class="st">"This is the second report. It is about something else interesting."</span><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>PHI:</strong> Make sure data containing patient health information is not checked into version control. Also, make sure to follow your institution’s policies on data sharing and storage.</p>
+</div>
+</div>
+</section>
+<section id="prompt-flows" class="level2">
+<h2 class="anchored" data-anchor-id="prompt-flows">Prompt flows</h2>
+<p>There are three different prompt flows in the repo. These are:</p>
+<ul>
+<li><strong>feature_report_flow:</strong> Entities with one label per report</li>
+<li><strong>feature_specimen_flow:</strong> Entities with one label per specimen</li>
+<li><strong>panel_specimen_flow:</strong> Entities for which a panel of tests exist (like IHC/FISH) where we want the specimen, block, test name, and test result for all instances in the report</li>
+</ul>
+<p>Each of these subdirectories contains similar files and follows a consistent structure for defining and executing a Prompt flow. The prompts contains basic instructions for medical information extraction and examples of expected output format. They use the Jinja templating engine to allow for re-use across entity types.</p>
+</section>
+<section id="extraction-schemas" class="level2">
+<h2 class="anchored" data-anchor-id="extraction-schemas">Extraction Schemas</h2>
+<p>The extraction schemas are defined in the <strong>schemas</strong> subdirectory. These are where we define the labels we want to extract from the report, as well as any entity specific instructions. They are defined in JSONs. The <strong>file name</strong> of the schema is used as the schema_name in the resulting output. The required top level keys are:</p>
+<ul>
+<li><strong>report_type:</strong> I use this as a top level organizer, so something like “pathology” or “radiology”</li>
+<li><strong>report_subtype”</strong> This is more of a sub-organizer, so something like “rcc” or “breast”</li>
+</ul>
+<p>Then there are keys for each entity type. They do not all have to be present. These keys are:</p>
+<ul>
+<li><strong>feature_report:</strong> One label per report</li>
+<li><strong>feature_specimen:</strong> One label per specimen</li>
+<li><strong>panel_specimen:</strong> One label per test specimen/block</li>
+</ul>
+<p>Within each of these keys we have the entities, with the top level key being the entity name. The value is a dictionary with keys determined by the entity type.</p>
+<section id="feature-report-feature-specimen" class="level3">
+<h3 class="anchored" data-anchor-id="feature-report-feature-specimen">Feature report &amp; feature specimen</h3>
+<p>Both of these have the same structure. The keys are:</p>
+<ul>
+<li><strong>feature_labels:</strong> List of label options</li>
+<li><strong>segment_feature_instructions:</strong> Instructions for the LLM to segment relevant text from the report. These instructions are typically informing what portions of the report contain the likely relevant information.</li>
+<li><strong>standardize_feature_instructions:</strong> Instructions for the LLM to standardize the segmented text. These instructions are typically informing the LLM of extra domain specific knowledge for assigning labels.</li>
+</ul>
+</section>
+<section id="panel-specimen" class="level3">
+<h3 class="anchored" data-anchor-id="panel-specimen">Panel specimen</h3>
+<p>The panel specimen schema is a bit different. The keys are:</p>
+<ul>
+<li><strong>panel_test_names:</strong> List of label options for names of individual tests</li>
+<li><strong>panel_test_results:</strong> List or structured vocabulary of label options for test results</li>
+<li><strong>segment_1_panel_instructions:</strong> Instructions for the LLM to segment relevant text from the report. This step is more broad than the second segment step, which organizes by specimen and block</li>
+<li><strong>segment_2_panel_instructions:</strong> Instructions for the LLM to segment and organize the segmented text by specimen and block.</li>
+<li><strong>standardize_panel_instructions:</strong> These instructions are typically informing the LLM of extra domain specific knowledge for standardizing test names and results.</li>
+</ul>
+</section>
+<section id="example-schema" class="level3">
+<h3 class="anchored" data-anchor-id="example-schema">Example schema</h3>
+<p>Below is a simple example schema, for extracting a single diagnosis per report, the histology for each specimen, and a handful of IHC tests as a panel.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"report_type"</span><span class="fu">:</span> <span class="st">"pathology"</span><span class="fu">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"report_subtype"</span><span class="fu">:</span> <span class="st">"rcc"</span><span class="fu">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"feature_report"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"diagnosis"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"feature_labels"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"RCC"</span><span class="ot">,</span> <span class="st">"Urothelial Carcinoma"</span><span class="ot">,</span> <span class="st">"Other"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"segment_feature_instructions"</span><span class="fu">:</span> <span class="st">"Segment the relevant text from the report that contains the diagnosis."</span><span class="fu">,</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"standardize_feature_instructions"</span><span class="fu">:</span> <span class="st">"Standardize the diagnosis to one of the following labels: RCC, Urothelial Carcinoma, Other."</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"feature_specimen"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"histology"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"feature_labels"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"RCC"</span><span class="ot">,</span> <span class="st">"Urothelial Carcinoma"</span><span class="ot">,</span> <span class="st">"Other"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"segment_feature_instructions"</span><span class="fu">:</span> <span class="st">"Segment the relevant text from the report that contains the histology."</span><span class="fu">,</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"standardize_feature_instructions"</span><span class="fu">:</span> <span class="st">"Standardize the histology to one of the following labels: RCC, Urothelial Carcinoma, Other."</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"panel_specimen"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"immunohistochemistry"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"panel_test_names"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"IHC1"</span><span class="ot">,</span> <span class="st">"IHC2"</span><span class="ot">,</span> <span class="st">"IHC3"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"panel_test_results"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"Positive"</span><span class="ot">,</span> <span class="st">"Negative"</span><span class="ot">,</span> <span class="st">"Weakly Positive"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"segment_1_panel_instructions"</span><span class="fu">:</span> <span class="st">"Segment the relevant text from the report that contains the IHC tests."</span><span class="fu">,</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"segment_2_panel_instructions"</span><span class="fu">:</span> <span class="st">"Segment the relevant text from the report that contains the specimen and block information."</span><span class="fu">,</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"standardize_panel_instructions"</span><span class="fu">:</span> <span class="st">"Standardize the IHC test names and results to one of the following labels: IHC1, IHC2, IHC3 for test names and Positive, Negative, Weakly Positive for test results."</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="running-the-flow" class="level2">
+<h2 class="anchored" data-anchor-id="running-the-flow">Running the flow</h2>
+<p>Great, now that we’ve covered the basics, let’s try running the flow.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Check out the recommended VS Code plug ins for running the example Jupyter notebook</p>
+</div>
+</div>
+<p>Using a jupyter notebook, we can run the flow with the following code to import the required libraries and create a Prompt flow client object.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First import the PFClient to use the client to interact with PromptFlow</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Then there are some helper functions that are used to run the flow and get the results</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> promptflow.client <span class="im">import</span> PFClient</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> app.helper_functions.run_pf_wrapper <span class="im">import</span> pf_batch_run_wrapper</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> app.helper_functions.flat_results <span class="im">import</span> flatten_outputs</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> app.helper_functions.get_json_outputs <span class="im">import</span> get_json_outputs</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating the client</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>pf_client <span class="op">=</span> PFClient()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now we need to decide on our run time parameters. These are:</p>
+<ul>
+<li><strong>data_path (FilePath):</strong> Path to either a CSV or JSONL file. The data needs to contain a report_id and report_text column/field.</li>
+<li><strong>schema_path (FilePath):</strong> Path to a JSON schema file</li>
+<li><strong>item_name (str):</strong> Name of the item to be processed, should be a key under one of the item types in the schema</li>
+<li><strong>connection_name (str):</strong> Name of the connection to be used as per the .env file</li>
+<li><strong>pf_worker_count (int, optional):</strong> Number of workers to use for the batch job. Defaults to 4.</li>
+<li><strong>flush_intermediate_data (bool, optional):</strong> The intermediate data that is passed to pf.run is deleted by default, but it is interesting to look at and can also be used for debugging. If set to false it will be under app/tmp.</li>
+<li><strong>csv_to_filter (FilePath, optional):</strong> Path to a CSV file to filter the data by report_id. Defaults to None.</li>
+</ul>
+<p>Now lets run the flow. A batch job starts and a Prompt flow run object is created.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>flow_result_diagnosis <span class="op">=</span> pf_batch_run_wrapper(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    pf_client, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    data_path<span class="op">=</span><span class="st">"example_data/input/example_jsonl_data.jsonl"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    schema_path<span class="op">=</span><span class="st">"app/schemas/pathology_rcc_schema_v12.json"</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    item_name<span class="op">=</span><span class="st">"diagnosis"</span>, </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    connection_name<span class="op">=</span><span class="st">"qwen"</span>, </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    pf_worker_count<span class="op">=</span><span class="dv">2</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can now use some helper functions to save the output as a CSV and a JSON</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This handy function extracts and organizes the results in a neat dataframe </span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>flat_df_diag <span class="op">=</span> flatten_outputs(pf_client<span class="op">=</span>pf_client, flow_result<span class="op">=</span>flow_result_diagnosis)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># This dataframe can then be saved as a csv file</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>flat_df_diag.to_csv(<span class="st">"example_data/output_flat/diagnosis.csv"</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># This function gets the full JSON outputs from the flow so you can check out the reasoning sections</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>json_outs_diag <span class="op">=</span> get_json_outputs(pf_client<span class="op">=</span>pf_client, flow_result<span class="op">=</span>flow_result_diagnosis)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># This can be saved to a JSON file</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>json_outs_diag.to_json(<span class="st">'example_data/output_json/diagnosis.json'</span>, orient<span class="op">=</span><span class="st">'index'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
