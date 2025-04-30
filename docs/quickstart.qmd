@@ -181,6 +181,7 @@ The panel specimen schema is a bit different. The keys are:
 
 * **panel_test_names:** List of label options for names of individual tests
 * **panel_test_results:** List or structured vocabulary of label options for test results
+* **panel_test_synonyms:** List of synonyms for the test names. This is used to help the LLM identify the test name in the report text. The preffered name is given first, and then the synonyms are given in parentheses.
 * **segment_1_panel_instructions:** Instructions for the LLM to segment relevant text from the report. This step is more broad than the second segment step, which organizes by specimen and block
 * **segment_2_panel_instructions:** Instructions for the LLM to segment and organize the segmented text by specimen and block.
 * **standardize_panel_instructions:** These instructions are typically informing the LLM of extra domain specific knowledge for standardizing test names and results.
@@ -196,24 +197,25 @@ Below is a simple example schema, for extracting a single diagnosis per report, 
     "feature_report": {
         "diagnosis": {
             "feature_labels": ["RCC", "Urothelial Carcinoma", "Other"],
-            "segment_feature_instructions": "Segment the relevant text from the report that contains the diagnosis.",
-            "standardize_feature_instructions": "Standardize the diagnosis to one of the following labels: RCC, Urothelial Carcinoma, Other."
+            "segment_feature_instructions": "Ensure addendums that confirm or rule out a diagnosis are segmented.",
+            "standardize_feature_instructions": "All RCC subtypes can be standardized to RCC"
         }
     },
     "feature_specimen": {
         "histology": {
-            "feature_labels": ["RCC", "Urothelial Carcinoma", "Other"],
-            "segment_feature_instructions": "Segment the relevant text from the report that contains the histology.",
-            "standardize_feature_instructions": "Standardize the histology to one of the following labels: RCC, Urothelial Carcinoma, Other."
+            "feature_labels": ["Clear cell", "Papillary", "Other"],
+            "segment_feature_instructions": "The histology is typically listed directly after the procedure.",
+            "standardize_feature_instructions": "The term 'consistent with' is strong enough to be conclusive."
         }
     },
     "panel_specimen": {
         "immunohistochemistry": {
-            "panel_test_names": ["IHC1", "IHC2", "IHC3"],
-            "panel_test_results": ["Positive", "Negative", "Weakly Positive"],
-            "segment_1_panel_instructions": "Segment the relevant text from the report that contains the IHC tests.",
-            "segment_2_panel_instructions": "Segment the relevant text from the report that contains the specimen and block information.",
-            "standardize_panel_instructions": "Standardize the IHC test names and results to one of the following labels: IHC1, IHC2, IHC3 for test names and Positive, Negative, Weakly Positive for test results."
+            "panel_test_names": ["CA-IX", "Racemase", "PD-L1"],
+            "panel_test_results": ["Positive", "Negative", "<percentage staining as per report>"],
+            "panel_test_synonyms": ["CA-IX (CA 9, CA-9)", "Racemase (AMACR)"],
+            "segment_1_panel_instructions": "Ensure addendums with updated results are captured.",
+            "segment_2_panel_instructions": "Addendums with updated results should be prioritized",
+            "standardize_panel_instructions": "For PD-L1, provide the percentage staining exactly as stated in the report, so including greater than or less than symbols."
         }
     }
 }
@@ -283,3 +285,8 @@ json_outs_diag = get_json_outputs(pf_client=pf_client, flow_result=flow_result_d
 json_outs_diag.to_json('example_data/output_json/diagnosis.json', orient='index')
 ```
 
+Now we can check out the results! Do they look right? If not, we can go back and edit the schema to improve the results.
+
+::: {.callout-tip}
+Track your schemas in a version control system like git. This will help you keep track of changes and improvements over time.
+:::

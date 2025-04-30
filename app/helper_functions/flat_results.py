@@ -56,7 +56,7 @@ result_type_to_flat_map = {
 }
 
 
-def extract_item(row: pd.Series, pf_run_name: str) -> list[FlatResultsRow]:
+def _extract_item(row: pd.Series, pf_run_name: str) -> list[FlatResultsRow]:
     """_summary_
 
     Args:
@@ -123,7 +123,7 @@ def flatten_outputs(pf_client: PFClient, flow_result: Run) -> pd.DataFrame:
         if row["outputs.json_items"] == "(Failed)":
             print(f"Failed row: {row}")
 
-        out_list = extract_item(row, pf_run_name)
+        out_list = _extract_item(row, pf_run_name)
         for out in out_list:
             out_series = pd.Series(out.model_dump())
             outputs.append(out_series)

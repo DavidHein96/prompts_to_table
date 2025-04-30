@@ -329,9 +329,7 @@ def pf_batch_run_wrapper(
     if flow_result is None:
         # This condition helps catch unexpected control flow where an error might have occurred
         # but wasn't properly raised, or if flow somehow completed without assigning flow_result.
-        # Depending on desired behavior, you might raise an error here or return None explicitly.
         logging.error("Flow execution finished, but no result object was generated.")
-        # raise RuntimeError("Flow completed without generating a result object.") # Option: raise an error
-        return None  # Option: return None
+        return None
 
     return flow_result

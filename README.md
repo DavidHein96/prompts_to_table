@@ -3,7 +3,10 @@
 Welcome to the Prompts 2 table code repo! This contains some code to get started using this workflow for information extraction from medical texts
 Check out [the pre-print here](https://www.medrxiv.org/content/10.1101/2025.02.11.25322107v1)
 
-And the interactive docs page [here](https://davidhein96.github.io/prompts_to_table/)
+And the interactive docs page is [here](https://davidhein96.github.io/prompts_to_table/)
+
+Right now I only have the Quick Start guide up. If you are interested in utilizing this code, feel free to open an issue or send me an email at david.hein@utsouthwestern.edu
+As mentioned in the pre-print, this specific workflow is not intended to be the "primary product", we instead point readers to our tables (in both the main text and supplement) that introduce higher level considerations for using LLMs for clinical information extraction.
 
 - [Prompts 2 Table](#prompts-2-table)
   - [Getting started](#getting-started)
